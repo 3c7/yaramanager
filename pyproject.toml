@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "yaramanager"
+version = "0.1.0"
+description = "CLI tool to manage your yara rules"
+authors = ["Nils.Kuhnert <Nils.Kuhnert@posteo.de>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+SQLAlchemy = "^1.4.2"
+plyara = "^2.1.1"
+yarabuilder = "^0.0.4"
+rich = "^9.13.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
