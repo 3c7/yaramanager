@@ -4,7 +4,7 @@ from yaramanager.db.base_class import Base
 
 
 class Meta(Base):
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     key = Column(String(255), index=True)
     value = Column(String(255), index=True)
     order = Column(Integer)
@@ -12,4 +12,6 @@ class Meta(Base):
     rule = relationship("Rule", back_populates="meta")
 
     def __repr__(self):
-        return f"<Meta {self.key}={self.value}>"
+        if self.rule:
+            return f"<YaraMeta {self.key}={self.value} (attached to {self.rule.name})>"
+        return f"<YaraMeta {self.key}={self.value}>"

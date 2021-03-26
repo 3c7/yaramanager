@@ -2,7 +2,7 @@
 name = "yaramanager"
 version = "0.1.0"
 description = "CLI tool to manage your yara rules"
-authors = ["Nils.Kuhnert <Nils.Kuhnert@posteo.de>"]
+authors = ["3c7 <3c7@posteo.de>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
@@ -17,3 +17,6 @@ rich = "^9.13.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+yarman = "yaramanager.main:cli"

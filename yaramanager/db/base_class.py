@@ -9,5 +9,5 @@ class Base:
 
     @declared_attr
     def __tablename__(self) -> str:
-        """This automatically generates a tablename"""
+        """This automatically generates a table name"""
         return self.__name__.lower()
