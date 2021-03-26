@@ -38,25 +38,26 @@ class Rule(Base):
                 meta.value
             )
         for string in self.strings:
+            s_name = string.name[1:]
             if string.type == "text":
                 yb.add_text_string(
                     self.name,
                     string.value,
-                    string.name,
+                    s_name,
                     string.modifier_list
                 )
-            elif string.type == "hex":
+            elif string.type == "byte":
                 yb.add_hex_string(
                     self.name,
                     string.value,
-                    string.name,
+                    s_name,
                     string.modifier_list  # Todo: Check hex string modifiers - this list should always be empty?
                 )
             elif string.type == "regex":
                 yb.add_regex_string(
                     self.name,
                     string.value,
-                    string.name,
+                    s_name,
                     string.modifier_list
                 )
             else:

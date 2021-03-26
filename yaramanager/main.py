@@ -72,17 +72,18 @@ def cli():
         engine = get_engine(args.database)
         Base.metadata.create_all(bind=engine)
     elif args.command == "add":
-        obj = parse_rule_file(args.path)[0]
-        rule = plyara_obj_to_rule(obj)
-        session = get_session(args.database)
-        q_rule = session.query(Rule).filter(Rule.name == rule.name).first()
-        if not q_rule:
-            session.add(rule)
-            session.commit()
-            print(f"Rule {rule.__repr__()} added to database.")
-        else:
-            print(f"Rule with name {rule.name} already in database.")
-            exit(-1)
+        objs = parse_rule_file(args.path)
+        for obj in objs:
+            rule = plyara_obj_to_rule(obj)
+            session = get_session(args.database)
+            q_rule = session.query(Rule).filter(Rule.name == rule.name).first()
+            if not q_rule:
+                session.add(rule)
+                session.commit()
+                print(f"Rule {rule.__repr__()} added to database.")
+            else:
+                print(f"Rule with name {rule.name} already in database.")
+                exit(-1)
     elif args.command == "list":
         session = get_session(args.database)
         rules = session.query(Rule).all()
