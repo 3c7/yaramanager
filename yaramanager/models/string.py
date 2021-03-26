@@ -40,5 +40,5 @@ class String(Base):
 
     def __repr__(self):
         if self.rule:
-            return f"<YaraString {self.name} (attached to {self.rule.name})>"
-        return f"<YaraString {self.name}>"
+            return f"<String {self.name} (attached to {self.rule.name})>"
+        return f"<String {self.name}>"

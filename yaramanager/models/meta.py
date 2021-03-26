@@ -13,5 +13,5 @@ class Meta(Base):
 
     def __repr__(self):
         if self.rule:
-            return f"<YaraMeta {self.key}={self.value} (attached to {self.rule.name})>"
-        return f"<YaraMeta {self.key}={self.value}>"
+            return f"<Meta {self.key}={self.value} (attached to {self.rule.name})>"
+        return f"<Meta {self.key}={self.value}>"

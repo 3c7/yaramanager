@@ -6,3 +6,5 @@ from yaramanager.models.rule import Rule
 from yaramanager.models.meta import Meta
 # noinspection PyUnresolvedReferences
 from yaramanager.models.string import String
+# noinspection PyUnresolvedReferences
+from yaramanager.models.tag import Tag

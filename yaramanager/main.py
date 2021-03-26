@@ -61,6 +61,8 @@ def cli():
     add.add_argument("path", type=str, help="Path to yara rule file.")
     list = subparser.add_parser("list", help="List rules in database")
     list.add_argument("-r", "--raw", action="store_true", help="Prints rules in yara format.")
+    get = subparser.add_parser("get", help="Get a single rule by id")
+    get.add_argument("id", type=int, help="ID of rule to fetch from database")
     args = parser.parse_args()
 
     if args.command == "parse":
@@ -74,8 +76,8 @@ def cli():
     elif args.command == "add":
         objs = parse_rule_file(args.path)
         for obj in objs:
-            rule = plyara_obj_to_rule(obj)
             session = get_session(args.database)
+            rule = plyara_obj_to_rule(obj, session)
             q_rule = session.query(Rule).filter(Rule.name == rule.name).first()
             if not q_rule:
                 session.add(rule)
@@ -93,20 +95,29 @@ def cli():
         else:
             c = Console()
             t = Table(show_header=True)
+            t.add_column("ID")
             t.add_column("Name")
+            t.add_column("Tags")
             t.add_column("Created")
             t.add_column("Modified")
             t.add_column("Author")
             t.add_column("Num_Strings")
             for rule in rules:
                 t.add_row(
+                    str(rule.id),
                     rule.name,
+                    ", ".join([tag.name for tag in rule.tags]),
                     rule.get_meta_value("date", "-"),
                     rule.get_meta_value("modified", "-"),
                     rule.get_meta_value("author", "-"),
                     str(len(rule.strings))
                 )
             c.print(t)
+    elif args.command == "get":
+        session = get_session(args.database)
+        rule = session.query(Rule).filter(Rule.id == args.id).first()
+        if rule:
+            print(rule)
 
 
 if __name__ == "__main__":

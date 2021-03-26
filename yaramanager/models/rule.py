@@ -1,11 +1,12 @@
 from sys import stderr
-from typing import Any
+from typing import Any, List
 
 from sqlalchemy import Column, String, Integer, Text
 from sqlalchemy.orm import relationship
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.base_class import Base
+from yaramanager.models.tables import tags_rules
 
 
 class Rule(Base):
@@ -14,9 +15,19 @@ class Rule(Base):
     meta = relationship("Meta", back_populates="rule")
     strings = relationship("String", back_populates="rule")
     condition = Column(Text)
+    imports = Column(Integer)
+    tags = relationship("Tag", back_populates="rules", secondary=tags_rules)
+
+    @property
+    def import_list(self) -> List[str]:
+        imports = self.imports
+        for imp in ["pe", "elf", "math", "hash", "vt"]:
+            if imports & 0x1 > 0:
+                yield imp
+            imports = imports >> 1
 
     def __repr__(self):
-        return f"<YaraRule {self.name}>"
+        return f"<Rule {self.name}>"
 
     def _get_meta(self, key: str) -> Any:
         for meta in self.meta:
@@ -62,5 +73,9 @@ class Rule(Base):
                 )
             else:
                 print(f"ERROR: Unknown string type \"{string.type}\".", file=stderr)
+        for tag in self.tags:
+            yb.add_tag(self.name, tag.name)
+        for imp in self.import_list:
+            yb.add_import(self.name, imp)
         yb.add_condition(self.name, self.condition.strip())
         return yb.build_rule(self.name)
