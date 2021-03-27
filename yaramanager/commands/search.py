@@ -1,12 +1,14 @@
 import click
 from rich.console import Console
-from rich.table import Table
 from rich.syntax import Syntax
-from yaramanager.db.base import String
-from yaramanager.db.session import get_session
+from rich.table import Table
 from yarabuilder import YaraBuilder
 
-@click.group()
+from yaramanager.db.base import String
+from yaramanager.db.session import get_session
+
+
+@click.group(help="Searches through your rules.")
 def search():
     pass
 

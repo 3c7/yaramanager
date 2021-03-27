@@ -13,7 +13,8 @@ from yaramanager.db.session import get_session
 from yaramanager.utils import get_md5, write_ruleset_to_tmp_file
 
 
-@click.command(help="Edit a rule. The default editor is codium, this will be adjustable in a future version.")
+@click.command(help="(Not implemented) Edits a rule with your default editor. "
+                    "Identifier can be part of a rule name or the specific ID.")
 @click.argument("identifier")
 def edit(identifier: Union[int, str]):
     c, ec = Console(), Console(file=stderr)

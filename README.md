@@ -5,7 +5,8 @@ A simple program to manage your yara ruleset in a (sqlite) database.
 - [x] Add rules
 - [x] Delete rules
 - [x] List rules
-- [ ] Search rules (and strings)  
+- [x] Search strings
+- [ ] Search rules
 - [ ] Cluster rules in rulesets
 - [ ] Enforce configurable default set of meta fields
 - [ ] Actually edit rules with `edit` command - currently only file changes are detected, but changes are not merged into the rule itself.
@@ -13,19 +14,17 @@ A simple program to manage your yara ruleset in a (sqlite) database.
 - [ ] Add database migrations
 
 ## Installation
-**Currently not implemented, package is not published, yet.**
 ```shell
 pip install yaramanager
 ```
 
 ## Features
 ### Asciinema
-[![Watch how to use yaramanger on asciinema](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO.svg)](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO)
-
+[![Watch how to use yaramanager](https://asciinema.org/a/HJJoaGaZIdWIFPG8h5AE5kUer.svg)](https://asciinema.org/a/HJJoaGaZIdWIFPG8h5AE5kUer)
 Store your Yara rules in a DB locally and manage them.
 
 ### Usage
-```shell
+```
 $ ym
 Usage: ym [OPTIONS] COMMAND [ARGS]...
 
@@ -33,10 +32,13 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  add    Add a new rule to the database.
-  del    Delete a rule by its ID or name.
-  edit   Edit a rule.
-  init   Creates the database.
-  list   Lists rules available in DB.
-  parse  Parses rule files.
+  add     Add a new rule to the database.
+  config  Review and change yaramanager configuration.
+  db      Manage your databases
+  del     Delete a rule by its ID or name.
+  edit    (Not implemented) Edits a rule with your default editor.
+  list    Lists rules available in DB.
+  parse   Parses rule files.
+  search  Searches through your rules.
+  stats   Prints stats about the database contents.
 ```

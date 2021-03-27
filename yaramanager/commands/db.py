@@ -6,7 +6,7 @@ from yaramanager.db.base import Base
 from yaramanager.db.session import get_engine
 
 
-@click.group()
+@click.group(help="Manage your databases")
 def db():
     pass
 
@@ -19,14 +19,14 @@ def init():
     Base.metadata.create_all(bind=engine)
 
 
-@db.command()
+@db.command(help="Returns info about the selected database.")
 def get():
     c = Console()
     config = load_config()
     c.print(f"Selected database: {config['databases'][config['db']]['path']}", highlight=False)
 
 
-@db.command()
+@db.command(help="Changes database.")
 @click.argument("db_num", type=int)
 def set(db_num):
     c, ec = Console(), Console(stderr=True, style="bold red")
