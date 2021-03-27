@@ -4,13 +4,36 @@ version = "0.1.0"
 description = "CLI tool to manage your yara rules"
 authors = ["3c7 <3c7@posteo.de>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/3c7/yaramanager"
+repository = "https://github.com/3c7/yaramanager"
+keywords = ["yara", "rule", "manage"]
+classifiers = [
+    "Environment :: Console",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Security",
+    "Topic :: Utilities"
+]
+include = [
+    "LICENSE"
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 SQLAlchemy = "^1.4.2"
 plyara = "^2.1.1"
 yarabuilder = "^0.0.4"
-rich = "^9.13.0"
+rich = "^10.0.0"
 alembic = "^1.5.8"
 click = "^7.1.2"
 toml = "^0.10.2"
