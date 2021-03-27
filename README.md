@@ -6,10 +6,11 @@ A simple program to manage your yara ruleset in a (sqlite) database.
 - [x] Delete rules
 - [x] List rules
 - [ ] Search rules (and strings)  
-- [ ] Cluster rules in ruleset
-- [ ] Enforce default set of meta fields
+- [ ] Cluster rules in rulesets
+- [ ] Enforce configurable default set of meta fields
 - [ ] Actually edit rules with `edit` command - currently only file changes are detected, but changes are not merged into the rule itself.
 - [ ] Implement rule export, backup and sharing possibilities
+- [ ] Add database migrations
 
 ## Installation
 **Currently not implemented, package is not published, yet.**
@@ -19,7 +20,7 @@ pip install yaramanager
 
 ## Features
 ### Asciinema
-[![asciicast](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO.svg)](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO)
+[![Watch how to use yaramanger on asciinema](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO.svg)](https://asciinema.org/a/GAXi9e2oJZzmNHK7KQHaVrieO)
 
 Store your Yara rules in a DB locally and manage them.
 
