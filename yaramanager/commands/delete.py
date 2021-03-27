@@ -10,11 +10,9 @@ from yaramanager.db.session import get_session
 
 
 @click.command("del", help="Delete a rule by its ID or name. Can delete multiple rules using the name.")
-@click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
-              help="Path to database (default ~/.config/yarman/database.db).")
 @click.argument("identifier")
-def delete(database: str, identifier: Union[int, str]):
-    session = get_session(database)
+def delete(identifier: Union[int, str]):
+    session = get_session()
     rule = session.query(Rule)
     if isinstance(identifier, int) or re.fullmatch(r"^\d+$", identifier):
         rule = rule.filter(Rule.id == int(identifier))

@@ -6,11 +6,13 @@ import toml
 from rich.console import Console
 
 init_config = {
-    "database": {
-        "driver": "sqlite",
-        "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data.db")
-    },
-    "editor": ["codium", "-w"]
+    "yaramanager": {
+        "database": {
+            "driver": "sqlite",
+            "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data.db")
+        },
+        "editor": ["codium", "-w"]
+    }
 }
 config_dir = os.path.join(os.getenv("HOME"), ".config", "yaramanager")
 config_file = os.path.join(config_dir, "config.toml")
@@ -44,7 +46,7 @@ class Config(OrderedDict):
                 fh.write(toml.dumps(init_config))
 
         with io.open(config_file, "r") as fh:
-            config_data = toml.loads(fh.read())
+            config_data = toml.loads(fh.read())["yaramanager"]
         super().__init__(self, **config_data)
 
 

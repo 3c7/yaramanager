@@ -1,7 +1,7 @@
 import io
-
 import click
 from rich.console import Console
+from rich.syntax import Syntax
 
 from yaramanager.config import load_config, config_file, init_config, write_config
 from yaramanager.utils import open_file
@@ -17,7 +17,11 @@ def config():
 @config.command(help="Get single config entry by key")
 @click.argument("key")
 def get(key):
-    pass
+    c, ec = Console(), Console(stderr=True, style="bold red")
+    if key in CONFIG.keys():
+        c.print(CONFIG[key])
+    else:
+        ec.print("Config key not found")
 
 
 @config.command(help="Edit your config with an external editor.")
@@ -29,7 +33,8 @@ def edit():
 def dump():
     c = Console()
     with io.open(config_file) as fh:
-        c.print(fh.read())
+        syntax = Syntax(fh.read(), "toml", background_color="default")
+        c.print(syntax)
 
 
 @config.command()
