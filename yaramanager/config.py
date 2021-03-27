@@ -66,5 +66,7 @@ def load_config() -> Config:
 
 
 def write_config(config: dict):
+    if "yaramanager" not in config.keys():
+        config = {"yaramanager": config}
     with io.open(config_file, "w") as fh:
-        fh.write(toml.dumps({"yaramanager": config}))
+        fh.write(toml.dumps(config))
