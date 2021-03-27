@@ -11,6 +11,7 @@ from .parse import parse
 from .read import read
 from .search import search
 from .stats import stats
+from .version import version
 
 
 @click.group()
@@ -29,3 +30,4 @@ cli.add_command(parse)
 cli.add_command(read)
 cli.add_command(search)
 cli.add_command(stats)
+cli.add_command(version)
