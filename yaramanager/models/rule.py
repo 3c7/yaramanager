@@ -12,8 +12,8 @@ from yaramanager.models.tables import tags_rules
 class Rule(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(255), index=True)
-    meta = relationship("Meta", back_populates="rule")
-    strings = relationship("String", back_populates="rule")
+    meta = relationship("Meta", back_populates="rule", cascade="all, delete, delete-orphan")
+    strings = relationship("String", back_populates="rule", cascade="all, delete, delete-orphan")
     condition = Column(Text)
     imports = Column(Integer)
     tags = relationship("Tag", back_populates="rules", secondary=tags_rules)
@@ -41,6 +41,17 @@ class Rule(Base):
 
     def __str__(self):
         yb = YaraBuilder()
+        self.add_to_yarabuilder(yb)
+        return yb.build_rule(self.name)
+
+    def add_to_yarabuilder(self, yb: YaraBuilder) -> None:
+        """Add the rule object to a given YaraBuilder instance
+
+        >>> rule = Rule(...)
+        >>> yb = YaraBuilder()
+        >>> rule.add_to_yarabuilder(yb)
+        >>> print(yb.build_rules())
+        """
         yb.create_rule(self.name)
         for meta in self.meta:
             yb.add_meta(
@@ -78,4 +89,3 @@ class Rule(Base):
         for imp in self.import_list:
             yb.add_import(self.name, imp)
         yb.add_condition(self.name, self.condition.strip())
-        return yb.build_rule(self.name)

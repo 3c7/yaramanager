@@ -11,6 +11,8 @@ SQLAlchemy = "^1.4.2"
 plyara = "^2.1.1"
 yarabuilder = "^0.0.4"
 rich = "^9.13.0"
+alembic = "^1.5.8"
+click = "^7.1.2"
 
 [tool.poetry.dev-dependencies]
 
@@ -19,4 +21,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-yarman = "yaramanager.main:cli"
+yarman = "yaramanager.commands.cli:cli"

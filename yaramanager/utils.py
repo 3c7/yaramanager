@@ -1,8 +1,10 @@
 import io
-from typing import Dict, List
+from hashlib import md5
+from typing import Dict, List, Union
 
 from plyara import Plyara
 from sqlalchemy.orm import Session
+from yarabuilder import YaraBuilder
 
 from yaramanager.models.meta import Meta
 from yaramanager.models.rule import Rule
@@ -80,3 +82,44 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
             r.tags.append(t)
     r.condition = obj["raw_condition"].split("\n", 1)[1]
     return r
+
+
+def parse_rule_file(path: str) -> Union[Dict, List]:
+    ply = Plyara()
+    with io.open(path) as fh:
+        return ply.parse_string(fh.read())
+
+
+def print_rule(rules: Union[Dict, List]) -> str:
+    yb = YaraBuilder()
+    if isinstance(rules, dict):
+        rules = [rules]
+    for rule in rules:
+        rn = rule["rule_name"]
+        yb.create_rule(rn)
+        for mdata in rule["metadata"]:
+            for k, v in mdata.items():
+                yb.add_meta(rn, k, v)
+        for tag in rule["tags"]:
+            yb.add_tag(rn, tag)
+        for yara_string in rule["strings"]:
+            s_type = yara_string["type"]
+            s_name = yara_string["name"][1:]
+            s_val = yara_string["value"]
+            s_mod = yara_string.get("modifiers", [])
+            if s_type == "text":
+                yb.add_text_string(rn, s_val, s_name, s_mod)
+            elif s_type == "regex":
+                yb.add_regex_string(rn, s_val, s_name, s_mod)
+            elif s_type == "byte":
+                yb.add_hex_string(rn, s_val[1:-1].strip(), s_name)
+        yb.add_condition(rn, " ".join(rule["condition_terms"]))
+    return yb.build_rules()
+
+
+def get_md5(path: str):
+    """Creates md5 hash of a file."""
+    hasher = md5()
+    with io.open(path, "rb") as fh:
+        hasher.update(fh.read())
+    return hasher.hexdigest()
