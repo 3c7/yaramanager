@@ -193,7 +193,7 @@ python-versions = "*"
 
 [[package]]
 name = "yarabuilder"
-version = "0.0.4"
+version = "0.0.5"
 description = "A package to build YARA rules using Python"
 category = "main"
 optional = false
@@ -202,7 +202,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "2085bcf8c324e6a9fedb7e31b057a53ea0bbc8c6f409318b46c1e66e20f7a2b9"
+content-hash = "3248e7be747de91078e058034798f1c2271bfa6df68b7e713f844afee714cd7a"
 
 [metadata.files]
 alembic = [
@@ -401,6 +401,6 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.3.tar.gz", hash = "sha256:99d4073b617d30288f569d3f13d2bd7548c3a7e4c8de87db09a9d29bb3a4a60c"},
 ]
 yarabuilder = [
-    {file = "yarabuilder-0.0.4-py3-none-any.whl", hash = "sha256:665a3b7204b06ae96e1dc5ae96f3ca9325f44dc9b53df34b53c4cf34b1df4d7c"},
-    {file = "yarabuilder-0.0.4.tar.gz", hash = "sha256:badc735bfb25f27e5de188cb39bdc321ad4f4a1b23d2909bd447f948167777a3"},
+    {file = "yarabuilder-0.0.5-py3-none-any.whl", hash = "sha256:d005c974fb039c9001673edce3d2f46fb6d41717d555aecd6e41b2da05faf637"},
+    {file = "yarabuilder-0.0.5.tar.gz", hash = "sha256:74294bc79891ccd3c73e8a5e81f302714434e50133bb8758ed3658ed5fa2255a"},
 ]
