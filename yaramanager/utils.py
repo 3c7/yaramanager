@@ -89,10 +89,14 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
     return r
 
 
-def parse_rule_file(path: str) -> Union[Dict, List]:
+def parse_rule(rule: str) -> Union[Dict, List]:
     ply = Plyara()
+    return ply.parse_string(rule)
+
+
+def parse_rule_file(path: str) -> Union[Dict, List]:
     with io.open(path) as fh:
-        return ply.parse_string(fh.read())
+        return parse_rule(fh.read())
 
 
 def print_rule(rules: Union[Dict, List]) -> str:
