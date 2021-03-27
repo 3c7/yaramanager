@@ -12,13 +12,16 @@ from yaramanager.db.session import get_session
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
 @click.option("--tag", "-t", help="Only display rules with given tag.")
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
+@click.option("--name", "-n", help="Only display rules containing [NAME].")
 @click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
               help="Path to database (default ~/.config/yarman/database.db).")
-def list(tag: str, raw: bool, database: str):
+def list(tag: str, raw: bool, name: str, database: str):
     session = get_session(database)
     rules = session.query(Rule)
     if tag and len(tag) > 0:
         rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
+    if name and len(name) > 0:
+        rules = rules.filter(Rule.name.like(f"%{name}%"))
     rules = rules.all()
 
     if raw:
