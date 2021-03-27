@@ -1,5 +1,5 @@
 from sys import stderr
-from typing import Any, List
+from typing import Any, List, Union
 
 from sqlalchemy import Column, String, Integer, Text
 from sqlalchemy.orm import relationship

@@ -1,5 +1,6 @@
 import io
 import os
+import re
 import subprocess
 from hashlib import md5
 from sys import stderr
@@ -12,10 +13,8 @@ from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
 
 from yaramanager.config import load_config
-from yaramanager.models.meta import Meta
-from yaramanager.models.rule import Rule
-from yaramanager.models.string import String
-from yaramanager.models.tag import Tag
+from yaramanager.db.base import Rule, Meta, String, Tag
+from yaramanager.db.session import get_session
 
 
 def read_rulefile(path: str) -> List[Dict]:
@@ -162,3 +161,13 @@ def open_file(path: str, status: Optional[str] = None):
         status = f"File {path} opened in external editor..."
     with c.status(status):
         subprocess.call(command)
+
+
+def get_rule_by_identifier(identifier: Union[str, int]) -> List[Rule]:
+    session = get_session()
+    rules = session.query(Rule)
+    if isinstance(identifier, int) or re.fullmatch(r"^\d+$", identifier):
+        rules = rules.filter(Rule.id == int(identifier))
+    else:
+        rules = rules.filter(Rule.name.like(f"%{identifier}%"))
+    return rules.all()
