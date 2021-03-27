@@ -1,6 +1,7 @@
 import click
 
 from .add import add
+from .config import config
 from .delete import delete
 from .edit import edit
 from .init import init
@@ -14,6 +15,7 @@ def cli():
 
 
 cli.add_command(add)
+cli.add_command(config)
 cli.add_command(delete)
 cli.add_command(edit)
 cli.add_command(init)

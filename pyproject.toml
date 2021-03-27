@@ -13,6 +13,7 @@ yarabuilder = "^0.0.4"
 rich = "^9.13.0"
 alembic = "^1.5.8"
 click = "^7.1.2"
+toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 

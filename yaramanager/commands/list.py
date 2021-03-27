@@ -1,7 +1,6 @@
-import os
-
 import click
 from rich.console import Console
+from rich.syntax import Syntax
 from rich.table import Table
 from yarabuilder import YaraBuilder
 
@@ -13,10 +12,8 @@ from yaramanager.db.session import get_session
 @click.option("--tag", "-t", help="Only display rules with given tag.")
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--name", "-n", help="Only display rules containing [NAME].")
-@click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
-              help="Path to database (default ~/.config/yarman/database.db).")
-def list(tag: str, raw: bool, name: str, database: str):
-    session = get_session(database)
+def list(tag: str, raw: bool, name: str):
+    session = get_session()
     rules = session.query(Rule)
     if tag and len(tag) > 0:
         rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
@@ -28,7 +25,9 @@ def list(tag: str, raw: bool, name: str, database: str):
         yb = YaraBuilder()
         for rule in rules:
             rule.add_to_yarabuilder(yb)
-        click.echo(yb.build_rules())
+        syntax = Syntax(yb.build_rules(), "python", background_color="default")
+        console = Console()
+        console.print(syntax)
     else:
         c = Console()
         t = Table()

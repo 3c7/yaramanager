@@ -1,16 +1,12 @@
-import os.path
-
 import click
 
 from yaramanager.db.base import Base
-from yaramanager.db.session import create_engine
+from yaramanager.db.session import get_engine
 
 
 @click.command(help="Creates the database. Currently does not allow migrations to newer DB schemas. "
                     "Future versions will support alembic migrations.")
-@click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
-              help="Path to database (default ~/.config/yarman/database.db).")
-def init(database: str):
+def init():
     click.echo("Initializing database...")
-    engine = create_engine(f"sqlite:///{database}")
+    engine = get_engine()
     Base.metadata.create_all(bind=engine)

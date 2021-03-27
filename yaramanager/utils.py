@@ -1,15 +1,17 @@
 import io
 import os
+import subprocess
 from hashlib import md5
 from sys import stderr
 from tempfile import mkstemp
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Optional
 
 from plyara import Plyara
 from rich.console import Console
 from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
 
+from yaramanager.config import load_config
 from yaramanager.models.meta import Meta
 from yaramanager.models.rule import Rule
 from yaramanager.models.string import String
@@ -122,7 +124,7 @@ def print_rule(rules: Union[Dict, List]) -> str:
 
 
 def get_md5(path: str):
-    """Creates md5 hash of a file."""
+    """Creates md5 hash of a file. Used for monitoring file changes during rule editing."""
     hasher = md5()
     with io.open(path, "rb") as fh:
         hasher.update(fh.read())
@@ -149,3 +151,14 @@ def write_ruleset_to_file(yb: YaraBuilder, file: Union[int, str]) -> int:
         ec = Console(file=stderr)
         ec.print(f"ERR: Number of bytes written should be greater 0 but was {b}.")
     return b
+
+
+def open_file(path: str, status: Optional[str] = None):
+    c = Console()
+    config = load_config()
+    command = config["editor"]
+    command.append(path)
+    if not status:
+        status = f"File {path} opened in external editor..."
+    with c.status(status):
+        subprocess.call(command)

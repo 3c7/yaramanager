@@ -14,12 +14,10 @@ from yaramanager.utils import get_md5, write_ruleset_to_tmp_file
 
 
 @click.command(help="Edit a rule. The default editor is codium, this will be adjustable in a future version.")
-@click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
-              help="Path to database (default ~/.config/yarman/database.db).")
 @click.argument("identifier")
-def edit(database: str, identifier: Union[int, str]):
+def edit(identifier: Union[int, str]):
     c, ec = Console(), Console(file=stderr)
-    session = get_session(database)
+    session = get_session()
     rule = session.query(Rule)
     if isinstance(identifier, int) or re.fullmatch(r"^\d+$", identifier):
         rule = rule.filter(Rule.id == int(identifier))
