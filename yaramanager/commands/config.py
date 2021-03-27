@@ -2,6 +2,7 @@ import io
 import click
 from rich.console import Console
 from rich.syntax import Syntax
+from rich.prompt import Confirm
 
 from yaramanager.config import load_config, config_file, init_config, write_config
 from yaramanager.utils import open_file
@@ -14,7 +15,7 @@ def config():
     pass
 
 
-@config.command(help="Get single config entry by key")
+@config.command(help="Get single config entry by key.")
 @click.argument("key")
 def get(key):
     c, ec = Console(), Console(stderr=True, style="bold red")
@@ -29,7 +30,7 @@ def edit():
     open_file(config_file, status="Config file opened in external editor...")
 
 
-@config.command()
+@config.command(help="Prints the current config to stdout.")
 def dump():
     c = Console()
     with io.open(config_file) as fh:
@@ -37,6 +38,8 @@ def dump():
         c.print(syntax)
 
 
-@config.command()
+@config.command(help="Resets the configuration.")
 def reset():
-    write_config(init_config)
+    confirm = Confirm.ask("Do you really want to reset the config?")
+    if confirm:
+        write_config(init_config)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaramanager"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI tool to manage your yara rules"
 authors = ["3c7 <3c7@posteo.de>"]
 license = "MIT"
@@ -32,7 +32,7 @@ include = [
 python = "^3.8"
 SQLAlchemy = "^1.4.2"
 plyara = "^2.1.1"
-yarabuilder = "^0.0.4"
+yarabuilder = "^0.0.5"
 rich = "^10.0.0"
 alembic = "^1.5.8"
 click = "^7.1.2"

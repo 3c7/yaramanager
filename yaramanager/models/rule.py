@@ -1,5 +1,5 @@
 from sys import stderr
-from typing import Any, List
+from typing import Any, List, Union
 
 from sqlalchemy import Column, String, Integer, Text
 from sqlalchemy.orm import relationship
@@ -71,14 +71,14 @@ class Rule(Base):
             elif string.type == "byte":
                 yb.add_hex_string(
                     self.name,
-                    string.value.strip()[1:-1],  # Cut {, }
+                    string.value,
                     s_name,
                     string.modifier_list  # Todo: Check hex string modifiers - this list should always be empty?
                 )
             elif string.type == "regex":
                 yb.add_regex_string(
                     self.name,
-                    string.value.strip()[1:-1],  # Cut /
+                    string.value,
                     s_name,
                     string.modifier_list
                 )
