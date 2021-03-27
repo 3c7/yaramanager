@@ -13,39 +13,44 @@ from yaramanager.db.session import get_session
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--name", "-n", help="Only display rules containing [NAME].")
 def list(tag: str, raw: bool, name: str):
+    c = Console()
     session = get_session()
     rules = session.query(Rule)
     if tag and len(tag) > 0:
         rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
     if name and len(name) > 0:
         rules = rules.filter(Rule.name.like(f"%{name}%"))
-    rules = rules.all()
+    count = rules.count()
 
-    if raw:
-        yb = YaraBuilder()
-        for rule in rules:
-            rule.add_to_yarabuilder(yb)
-        syntax = Syntax(yb.build_rules(), "python", background_color="default")
-        console = Console()
-        console.print(syntax)
+    if count == 0:
+        c.print(f"Query returned empty list of rules.")
     else:
-        c = Console()
-        t = Table()
-        t.add_column("ID")
-        t.add_column("Name")
-        t.add_column("Tags")
-        t.add_column("Author")
-        t.add_column("TLP")
-        t.add_column("Created")
-        t.add_column("Modified")
-        for rule in rules:
-            t.add_row(
-                str(rule.id),
-                rule.name,
-                ", ".join([tag.name for tag in rule.tags]),
-                rule.get_meta_value("author", "None"),
-                rule.get_meta_value("tlp", "None"),
-                rule.get_meta_value("date", "None"),
-                rule.get_meta_value("modified", "None")
-            )
-        c.print(t)
+        c.print(f"Loading {count} rules...")
+        rules = rules.all()
+
+        if raw:
+            yb = YaraBuilder()
+            for rule in rules:
+                rule.add_to_yarabuilder(yb)
+            syntax = Syntax(yb.build_rules(), "python", background_color="default")
+            c.print(syntax)
+        else:
+            t = Table()
+            t.add_column("ID")
+            t.add_column("Name")
+            t.add_column("Tags")
+            t.add_column("Author")
+            t.add_column("TLP")
+            t.add_column("Created")
+            t.add_column("Modified")
+            for rule in rules:
+                t.add_row(
+                    str(rule.id),
+                    rule.name,
+                    ", ".join([tag.name for tag in rule.tags]),
+                    rule.get_meta_value("author", "None"),
+                    rule.get_meta_value("tlp", "None"),
+                    rule.get_meta_value("date", "None"),
+                    rule.get_meta_value("modified", "None")
+                )
+            c.print(t)
