@@ -1,17 +1,25 @@
 import io
 import os
 from collections import OrderedDict
+from typing import Dict
 
 import toml
 from rich.console import Console
 
 init_config = {
     "yaramanager": {
-        "database": {
-            "driver": "sqlite",
-            "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data.db")
-        },
-        "editor": ["codium", "-w"]
+        "databases": [
+            {
+                "driver": "sqlite",
+                "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data.db")
+            },
+            {
+                "driver": "sqlite",
+                "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data_alt.db")
+            }
+        ],
+        "editor": ["codium", "-w"],
+        "db": 0
     }
 }
 config_dir = os.path.join(os.getenv("HOME"), ".config", "yaramanager")
@@ -26,6 +34,9 @@ class Config(OrderedDict):
         if not Config.instance:
             Config.instance = Config()
         return Config.instance
+
+    def get_current_db(self) -> Dict:
+        return self["databases"][self["db"]]
 
     def __init__(self):
         ec = Console(stderr=True, style="bold yellow")
@@ -50,10 +61,10 @@ class Config(OrderedDict):
         super().__init__(self, **config_data)
 
 
-def load_config() -> OrderedDict:
+def load_config() -> Config:
     return Config.get_instance()
 
 
 def write_config(config: dict):
     with io.open(config_file, "w") as fh:
-        fh.write(toml.dumps(config))
+        fh.write(toml.dumps({"yaramanager": config}))

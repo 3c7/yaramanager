@@ -10,6 +10,7 @@ from yaramanager.config import load_config
 def stats():
     c = Console()
     config = load_config()
+    db = config.get_current_db()
     session = get_session()
     rule_count = session.query(Rule).count()
     string_count = session.query(String).count()
@@ -21,5 +22,5 @@ def stats():
     c.print(f"Number of tags:\t\t{tag_count}")
     c.print()
 
-    if config["database"]["driver"] == "sqlite":
-        c.print(f"Database size: \t\t{os.path.getsize(config['database']['path'])/1024/1024:.2}MB")
+    if db["driver"] == "sqlite":
+        c.print(f"Database size: \t\t{os.path.getsize(db['path'])/1024/1024:.2}MB")

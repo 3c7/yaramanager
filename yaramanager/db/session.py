@@ -7,8 +7,11 @@ from rich.console import Console
 
 
 def get_session() -> Session:
-    path = load_config()["database"]["path"]
-    if not os.path.exists(path) or os.path.getsize(path) == 0:
+    config = load_config()
+    db = config.get_current_db()
+    driver = db["driver"]
+    path = db["path"]
+    if driver == "sqlite" and not os.path.exists(path) or os.path.getsize(path) == 0:
         ec = Console(stderr=True, style="bold red")
         ec.print("Database not initialized.")
         exit(-1)
@@ -18,8 +21,9 @@ def get_session() -> Session:
 
 def get_engine() -> Engine:
     config = load_config()
-    driver = config["database"]["driver"]
-    path = config["database"]["path"]
+    db = config.get_current_db()
+    driver = db["driver"]
+    path = db["path"]
     if driver == "sqlite":
         driver += ":///"
     else:

@@ -13,7 +13,7 @@ from yaramanager.db.session import get_session
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--name", "-n", help="Only display rules containing [NAME].")
 def list(tag: str, raw: bool, name: str):
-    c = Console()
+    c, ec = Console(), Console(stderr=True, style="bold yellow")
     session = get_session()
     rules = session.query(Rule)
     if tag and len(tag) > 0:
@@ -31,6 +31,9 @@ def list(tag: str, raw: bool, name: str):
         if raw:
             yb = YaraBuilder()
             for rule in rules:
+                if rule.name in yb.yara_rules.keys():
+                    ec.print(f"Rule name {rule.name} is duplicate. Skipping...")
+                    continue
                 rule.add_to_yarabuilder(yb)
             syntax = Syntax(yb.build_rules(), "python", background_color="default")
             c.print(syntax)
