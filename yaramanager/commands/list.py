@@ -18,7 +18,7 @@ def list(tag: str, raw: bool, database: str):
     session = get_session(database)
     rules = session.query(Rule)
     if tag and len(tag) > 0:
-        rules = rules.join(Tag).filter(Tag.name == tag)
+        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
     rules = rules.all()
 
     if raw:
