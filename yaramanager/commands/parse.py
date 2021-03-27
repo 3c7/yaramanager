@@ -5,8 +5,8 @@ import click
 from yaramanager.utils import print_rule, parse_rule_file
 
 
-@click.command()
-@click.option("--raw", "-r", is_flag=True, help="Print rules to stdout instead in a formatted list.")
+@click.command(help="Parses rule files. This is mainly used for development and debugging purposes.")
+@click.option("--raw", "-r", is_flag=True, help="Print plyara output instead of yara.")
 @click.argument("path")
 def parse(raw: bool, path: str):
     if not raw:

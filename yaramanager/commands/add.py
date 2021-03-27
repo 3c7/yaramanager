@@ -1,8 +1,10 @@
-import click
-import os
 import os.path
+
+import click
+
 from yaramanager.db.session import get_session
 from yaramanager.utils import parse_rule_file, plyara_obj_to_rule
+
 
 @click.command(help="Add a new rule to the database.")
 @click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),

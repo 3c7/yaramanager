@@ -1,7 +1,7 @@
 import os
 import re
+import subprocess
 from sys import stderr
-from tempfile import mkstemp
 from typing import Union
 
 import click
@@ -10,11 +10,10 @@ from yarabuilder import YaraBuilder
 
 from yaramanager.db.base import Rule
 from yaramanager.db.session import get_session
-from yaramanager.utils import get_md5
-import subprocess
+from yaramanager.utils import get_md5, write_ruleset_to_tmp_file
 
-@click.command(help="Edit a rule. You can replace the editor to use via EDITOR evironment variable, "
-                    "default is \"codium\".")
+
+@click.command(help="Edit a rule. The default editor is codium, this will be adjustable in a future version.")
 @click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
               help="Path to database (default ~/.config/yarman/database.db).")
 @click.argument("identifier")
@@ -31,14 +30,12 @@ def edit(database: str, identifier: Union[int, str]):
         ec.print(f"Found more than one rule.")
         exit(-1)
     rule = rule[0]
-    fd_temp, path = mkstemp(suffix=".yar")
-    with os.fdopen(fd_temp, "w") as fh:
-        yb = YaraBuilder()
-        rule.add_to_yarabuilder(yb)
-        fh.write(yb.build_rules())
+    yb = YaraBuilder()
+    rule.add_to_yarabuilder(yb)
+    path, num_bytes = write_ruleset_to_tmp_file(yb)
     hash = get_md5(path)
     with c.status(f"{rule.name} opened in external editor..."):
-        subprocess.call(["codium",  "-w", path])
+        subprocess.call(["codium", "-w", path])
         edit_hash = get_md5(path)
 
     if hash == edit_hash:

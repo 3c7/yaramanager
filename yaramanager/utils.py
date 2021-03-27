@@ -1,8 +1,12 @@
 import io
+import os
 from hashlib import md5
-from typing import Dict, List, Union
+from sys import stderr
+from tempfile import mkstemp
+from typing import Dict, List, Union, Tuple
 
 from plyara import Plyara
+from rich.console import Console
 from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
 
@@ -123,3 +127,25 @@ def get_md5(path: str):
     with io.open(path, "rb") as fh:
         hasher.update(fh.read())
     return hasher.hexdigest()
+
+
+def write_ruleset_to_tmp_file(yb: YaraBuilder) -> Tuple[str, int]:
+    """Writes a ruleset defined by yarabuilder to a temporary file and returns the path."""
+    fd_temp, path = mkstemp(suffix=".yar")
+    bytes = write_ruleset_to_file(yb, fd_temp)
+    return path, bytes
+
+
+def write_ruleset_to_file(yb: YaraBuilder, file: Union[int, str]) -> int:
+    """Write a ruleset defined by yarabuilder to a given filedescriptor or filepath."""
+    text = yb.build_rules()
+    if isinstance(file, int):
+        with os.fdopen(file, "w") as fh:
+            b = fh.write(text)
+    else:
+        with io.open(file, "w") as fh:
+            b = fh.write(text)
+    if b <= 0:
+        ec = Console(file=stderr)
+        ec.print(f"ERR: Number of bytes written should be greater 0 but was {b}.")
+    return b

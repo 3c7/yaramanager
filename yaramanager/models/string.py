@@ -1,7 +1,9 @@
+from typing import List
+
 from sqlalchemy import Column, Integer, String as SA_String, ForeignKey, Text
 from sqlalchemy.orm import relationship
+
 from yaramanager.db.base_class import Base
-from typing import List
 
 
 class String(Base):

@@ -6,7 +6,8 @@ from yaramanager.db.base import Base
 from yaramanager.db.session import create_engine
 
 
-@click.command()
+@click.command(help="Creates the database. Currently does not allow migrations to newer DB schemas. "
+                    "Future versions will support alembic migrations.")
 @click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
               help="Path to database (default ~/.config/yarman/database.db).")
 def init(database: str):

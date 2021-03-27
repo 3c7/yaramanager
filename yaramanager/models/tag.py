@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+
 from yaramanager.db.base_class import Base
 from yaramanager.models.tables import tags_rules
 

@@ -1,13 +1,15 @@
-import click
 import os
-from yaramanager.db.base import Rule, Tag
-from yaramanager.db.session import get_session
-from yarabuilder import YaraBuilder
+
+import click
 from rich.console import Console
 from rich.table import Table
+from yarabuilder import YaraBuilder
+
+from yaramanager.db.base import Rule, Tag
+from yaramanager.db.session import get_session
 
 
-@click.command()
+@click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
 @click.option("--tag", "-t", help="Only display rules with given tag.")
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--database", "-d", default=os.path.join(os.getenv("HOME"), ".config", "yarman", "database.db"),
