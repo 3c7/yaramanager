@@ -9,6 +9,7 @@ from typing import Dict, List, Union, Tuple, Optional
 
 from plyara import Plyara
 from rich.console import Console
+from rich.table import Table
 from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
 
@@ -175,3 +176,25 @@ def get_rule_by_identifier(identifier: Union[str, int]) -> List[Rule]:
     else:
         rules = rules.filter(Rule.name.like(f"%{identifier}%"))
     return rules.all()
+
+
+def rules_to_table(rules: List[Rule]) -> Table:
+    """Creates a rich.table.Table object from s list of rules."""
+    meta_columns = load_config().get("meta", {})
+    table = Table()
+    table.add_column("ID")
+    table.add_column("Name")
+    table.add_column("Tags")
+    for column in meta_columns.keys():
+        table.add_column(column)
+
+    for rule in rules:
+        row = [
+            str(rule.id),
+            rule.name,
+            ", ".join([tag.name for tag in rule.tags])
+        ]
+        for column in meta_columns.values():
+            row.append(rule.get_meta_value(column, default="None"))
+        table.add_row(*row)
+    return table
