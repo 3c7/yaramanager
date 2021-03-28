@@ -6,11 +6,12 @@ A simple program to manage your yara ruleset in a (sqlite) database.
 - [x] Delete rules
 - [x] List rules
 - [x] Search strings
+- [x] Actually edit rules with `edit` command - currently only file changes are detected, but changes are not merged into the rule itself.
+- [x] Implement rule export
 - [ ] Search rules
 - [ ] Cluster rules in rulesets
 - [ ] Enforce configurable default set of meta fields
-- [ ] Actually edit rules with `edit` command - currently only file changes are detected, but changes are not merged into the rule itself.
-- [ ] Implement rule export, backup and sharing possibilities
+- [ ] Implement backup and sharing possibilities
 - [ ] Add database migrations
 
 ## Installation
@@ -32,13 +33,17 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  add     Add a new rule to the database.
-  config  Review and change yaramanager configuration.
-  db      Manage your databases
-  del     Delete a rule by its ID or name.
-  edit    (Not implemented) Edits a rule with your default editor.
-  list    Lists rules available in DB.
-  parse   Parses rule files.
-  search  Searches through your rules.
-  stats   Prints stats about the database contents.
+  add      Add a new rule to the database.
+  config   Review and change yaramanager configuration.
+  db       Manage your databases
+  del      Delete a rule by its ID or name.
+  edit     Edits a rule with your default editor.
+  export   Export rules from the database.
+  get      Get rules from the database.
+  list     Lists rules available in DB.
+  parse    Parses rule files.
+  read     Read rules from stdin.
+  search   Searches through your rules.
+  stats    Prints stats about the database contents.
+  version  Displays the current version.    
 ```
