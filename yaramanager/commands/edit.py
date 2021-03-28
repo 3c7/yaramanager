@@ -17,7 +17,7 @@ from yaramanager.utils import (
 )
 
 
-@click.command(help="(Not implemented) Edits a rule with your default editor. "
+@click.command(help="Edits a rule with your default editor. "
                     "Identifier can be part of a rule name or the specific ID.")
 @click.argument("identifier")
 def edit(identifier: Union[int, str]):
