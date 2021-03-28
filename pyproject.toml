@@ -37,6 +37,7 @@ rich = "^10.0.0"
 alembic = "^1.5.8"
 click = "^7.1.2"
 toml = "^0.10.2"
+requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
 
