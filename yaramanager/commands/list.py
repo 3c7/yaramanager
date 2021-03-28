@@ -6,7 +6,7 @@ from yarabuilder import YaraBuilder
 
 from yaramanager.db.base import Rule, Tag
 from yaramanager.db.session import get_session
-
+from yaramanager.utils import rules_to_table
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
 @click.option("--tag", "-t", help="Only display rules with given tag.")
@@ -38,22 +38,4 @@ def list(tag: str, raw: bool, name: str):
             syntax = Syntax(yb.build_rules(), "python", background_color="default")
             c.print(syntax)
         else:
-            t = Table()
-            t.add_column("ID")
-            t.add_column("Name")
-            t.add_column("Tags")
-            t.add_column("Author")
-            t.add_column("TLP")
-            t.add_column("Created")
-            t.add_column("Modified")
-            for rule in rules:
-                t.add_row(
-                    str(rule.id),
-                    rule.name,
-                    ", ".join([tag.name for tag in rule.tags]),
-                    rule.get_meta_value("author", "None"),
-                    rule.get_meta_value("tlp", "None"),
-                    rule.get_meta_value("date", "None"),
-                    rule.get_meta_value("modified", "None")
-                )
-            c.print(t)
+            c.print(rules_to_table(rules))

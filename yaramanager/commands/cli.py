@@ -5,6 +5,7 @@ from .config import config
 from .db import db
 from .delete import delete
 from .edit import edit
+from .export import export
 from .get import get
 from .list import list
 from .parse import parse
@@ -24,6 +25,7 @@ cli.add_command(config)
 cli.add_command(db)
 cli.add_command(delete)
 cli.add_command(edit)
+cli.add_command(export)
 cli.add_command(get)
 cli.add_command(list)
 cli.add_command(parse)

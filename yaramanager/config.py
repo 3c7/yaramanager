@@ -19,7 +19,13 @@ init_config = {
             }
         ],
         "editor": ["codium", "-w"],
-        "db": 0
+        "db": 0,
+        "meta": {
+            "Author": "author",
+            "TLP": "tlp",
+            "Created": "created",
+            "Modified": "modified"
+        }
     }
 }
 config_dir = os.path.join(os.getenv("HOME"), ".config", "yaramanager")

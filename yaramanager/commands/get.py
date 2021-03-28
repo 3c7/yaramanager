@@ -1,7 +1,9 @@
-import click
 import io
-from yarabuilder import YaraBuilder
+
+import click
 from rich.console import Console
+from yarabuilder import YaraBuilder
+
 from yaramanager.utils import get_rule_by_identifier
 
 
