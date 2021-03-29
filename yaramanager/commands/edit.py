@@ -23,7 +23,7 @@ from yaramanager.utils import (
 def edit(identifier: Union[int, str]):
     c, ec = Console(), Console(file=stderr, style="bold red")
     session = get_session()
-    rule = get_rule_by_identifier(identifier)
+    rule = get_rule_by_identifier(identifier, session)
     if len(rule) > 1:
         ec.print(f"Found more than one rule.")
         exit(-1)
@@ -46,9 +46,12 @@ def edit(identifier: Union[int, str]):
             exit(-1)
         edited_rule = plyara_obj_to_rule(edited_rule[0], session)
         rule.name = edited_rule.name
+        rule.meta = edited_rule.meta
         rule.imports = edited_rule.imports
         rule.strings = edited_rule.strings
         rule.tags = edited_rule.tags
         session.add(rule)
+        # Removes edited rule from session, otherwise a copy of the rule would be created
+        session.delete(edited_rule)
         session.commit()
     os.remove(path)

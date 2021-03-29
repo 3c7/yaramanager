@@ -168,8 +168,9 @@ def open_file(path: str, status: Optional[str] = None):
         subprocess.call(command)
 
 
-def get_rule_by_identifier(identifier: Union[str, int]) -> List[Rule]:
-    session = get_session()
+def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Session] = None) -> List[Rule]:
+    if not session:
+        session = get_session()
     rules = session.query(Rule)
     if isinstance(identifier, int) or re.fullmatch(r"^\d+$", identifier):
         rules = rules.filter(Rule.id == int(identifier))
