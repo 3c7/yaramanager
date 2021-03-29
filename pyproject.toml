@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaramanager"
-version = "0.1.3"
+version = "0.1.4"
 description = "CLI tool to manage your yara rules"
 authors = ["3c7 <3c7@posteo.de>"]
 license = "MIT"
