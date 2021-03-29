@@ -1,12 +1,12 @@
 import click
 from rich.console import Console
 from rich.syntax import Syntax
-from rich.table import Table
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.base import Rule, Tag
 from yaramanager.db.session import get_session
 from yaramanager.utils import rules_to_table
+
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
 @click.option("--tag", "-t", help="Only display rules with given tag.")
