@@ -25,7 +25,9 @@ classifiers = [
     "Topic :: Utilities"
 ]
 include = [
-    "LICENSE"
+    "LICENSE",
+    "alembic.ini",
+    "alembic"
 ]
 
 [tool.poetry.dependencies]
