@@ -199,3 +199,20 @@ def rules_to_table(rules: List[Rule]) -> Table:
             row.append(rule.get_meta_value(column, default="None"))
         table.add_row(*row)
     return table
+
+
+def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List, int]:
+    if not session:
+        session = get_session()
+
+    rules = session.query(Rule)
+    if tag and len(tag) > 0:
+        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
+    if name and len(name) > 0:
+        rules = rules.filter(Rule.name.like(f"%{name}%"))
+    count = rules.count()
+
+    if count == 0:
+        return [], count
+    else:
+        return rules.all(), count
