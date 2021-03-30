@@ -159,13 +159,21 @@ def write_ruleset_to_file(yb: YaraBuilder, file: Union[int, str]) -> int:
 
 def open_file(path: str, status: Optional[str] = None):
     c = Console()
-    config = load_config()
-    command = config["editor"]
+    env_editor = os.getenv("EDITOR", None)
+    env_disable_status = os.getenv("DISABLE_STATUS", None)
+    if env_editor:
+        command = env_editor.split(" ")
+    else:
+        config = load_config()
+        command = config["editor"]
     command.append(path)
-    if not status:
-        status = f"File {path} opened in external editor..."
-    with c.status(status):
+    if env_disable_status:
         subprocess.call(command)
+    else:
+        if not status:
+            status = f"{path} opened in external editor..."
+        with c.status(status):
+            subprocess.call(command)
 
 
 def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Session] = None) -> List[Rule]:
@@ -199,3 +207,20 @@ def rules_to_table(rules: List[Rule]) -> Table:
             row.append(rule.get_meta_value(column, default="None"))
         table.add_row(*row)
     return table
+
+
+def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List, int]:
+    if not session:
+        session = get_session()
+
+    rules = session.query(Rule)
+    if tag and len(tag) > 0:
+        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
+    if name and len(name) > 0:
+        rules = rules.filter(Rule.name.like(f"%{name}%"))
+    count = rules.count()
+
+    if count == 0:
+        return [], count
+    else:
+        return rules.all(), count

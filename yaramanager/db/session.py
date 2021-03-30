@@ -1,9 +1,11 @@
+import os
+
+from rich.console import Console
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
-import os
+
 from yaramanager.config import load_config
-from rich.console import Console
 
 
 def get_session() -> Session:
@@ -20,6 +22,11 @@ def get_session() -> Session:
 
 
 def get_engine() -> Engine:
+    db_path = get_path()
+    return create_engine(db_path)
+
+
+def get_path() -> str:
     config = load_config()
     db = config.get_current_db()
     driver = db["driver"]
@@ -28,4 +35,4 @@ def get_engine() -> Engine:
         driver += ":///"
     else:
         driver += "://"
-    return create_engine(f"{driver}{path}")
+    return f"{driver}{path}"

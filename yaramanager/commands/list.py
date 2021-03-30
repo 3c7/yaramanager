@@ -5,7 +5,7 @@ from yarabuilder import YaraBuilder
 
 from yaramanager.db.base import Rule, Tag
 from yaramanager.db.session import get_session
-from yaramanager.utils import rules_to_table
+from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag
 
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
@@ -15,19 +15,11 @@ from yaramanager.utils import rules_to_table
 def list(tag: str, raw: bool, name: str):
     c, ec = Console(), Console(stderr=True, style="bold yellow")
     session = get_session()
-    rules = session.query(Rule)
-    if tag and len(tag) > 0:
-        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
-    if name and len(name) > 0:
-        rules = rules.filter(Rule.name.like(f"%{name}%"))
-    count = rules.count()
+    rules, count = filter_rules_by_name_and_tag(name, tag, session)
 
     if count == 0:
         c.print(f"Query returned empty list of rules.")
     else:
-        c.print(f"Loading {count} rules...")
-        rules = rules.all()
-
         if raw:
             yb = YaraBuilder()
             for rule in rules:
