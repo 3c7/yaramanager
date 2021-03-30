@@ -13,7 +13,7 @@ from yaramanager.utils import parse_rule_file, plyara_obj_to_rule
 def add(paths: List[str]):
     session = get_session()
     with Progress() as progress:
-        t1 = progress.add_task("[cyan]Processing rule files...", total=len(paths))
+        t1 = progress.add_task("Processing rule files...", total=len(paths))
         for rule_path in paths:
             progress.console.print(f"Processing {os.path.basename(rule_path)}...")
             plyara_list = parse_rule_file(rule_path)
