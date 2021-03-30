@@ -25,7 +25,9 @@ def get(key):
         ec.print("Config key not found")
 
 
-@config.command(help="Edit your config with an external editor.")
+@config.command(help=f"Edit your config with an external editor. The config file can be found here: {config_file}. "
+                     f"If you don't use codium as default editor, you need to change the according key in the config "
+                     f"or use the environment variable EDITOR.")
 def edit():
     open_file(config_file, status="Config file opened in external editor...")
 

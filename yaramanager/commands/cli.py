@@ -20,7 +20,11 @@ from .tags import tags
 from .version import version
 
 
-@click.group()
+@click.group(
+    help="ym - yaramanager. Use the commands shown below to manage your yara ruleset. By default, the manager "
+         "uses codium as editor. You can change that in the config file or using EDITOR environment variable. "
+         "When using editors in the console, you might want to disable the status display using DISABLE_STATUS."
+)
 def cli():
     pass
 
