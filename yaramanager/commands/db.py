@@ -7,22 +7,12 @@ from rich.console import Console
 from rich.prompt import Confirm
 
 from yaramanager.config import load_config, write_config
-from yaramanager.db.base import Base
-from yaramanager.db.session import get_engine, get_path
+from yaramanager.db.session import get_path
 
 
 @click.group(help="Manage your databases")
 def db():
     pass
-
-
-@db.command(help="Creates the database. Currently does not allow migrations to newer DB schemas. "
-                 "Future versions will support alembic migrations.", deprecated=True)
-def init():
-    c = Console()
-    c.print("Initializing database...")
-    engine = get_engine()
-    Base.metadata.create_all(bind=engine)
 
 
 @db.command(help="Returns info about the selected database.")
@@ -44,7 +34,7 @@ def set(db_num):
     write_config(config)
 
 
-@db.command(help="Init or update the currently chosen database using alembic.")
+@db.command(help="Database initialization or schema upgrade.")
 def upgrade():
     c = Console()
     db_path = get_path()
