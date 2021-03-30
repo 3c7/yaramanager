@@ -1,11 +1,12 @@
-import click
-import os
 import io
+import os
+
+import click
 from rich.console import Console
 from yarabuilder import YaraBuilder
 
-from yaramanager.db.base import Rule, Tag
 from yaramanager.db.session import get_session
+from yaramanager.utils import filter_rules_by_name_and_tag
 
 
 @click.command(help="Export rules from the database. The set of rules can be filtered through commandline options. "
@@ -17,14 +18,9 @@ from yaramanager.db.session import get_session
 def export(name: str, tag: str, single: bool, path: str):
     c, ec = Console(), Console(stderr=True, style="bold red")
     session = get_session()
-    rules = session.query(Rule)
-    if name and len(name) > 0:
-        rules = rules.filter(Rule.name.like(f"%{name}%"))
-    if tag and len(tag) > 0:
-        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
-    rules = rules.all()
+    rules, count = filter_rules_by_name_and_tag(name, tag, session)
 
-    if len(rules) == 0:
+    if count == 0:
         ec.print(f"Found no matching rules.")
         exit(-1)
 
