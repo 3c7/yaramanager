@@ -1,3 +1,5 @@
+from typing import List
+
 import click
 from rich.console import Console
 
@@ -42,13 +44,16 @@ cli.add_command(version)
 
 @cli.command(help="Displays help about commands")
 @click.argument("cmds", nargs=-1)
-def help(cmds):
+def help(cmds: List[str]):
     c, ec = Console(), Console(stderr=True, style="bold red")
     ctx = click.get_current_context()
     if not cmds or len(cmds) == 0:
         print(cli.get_help(ctx))
     command = cli
     for cmd in cmds:
+        if not isinstance(command, click.Group):
+            ec.print("Command not found.")
+            exit(-1)
         command = command.commands.get(cmd, None)
         if not command:
             ec.print("Command not found.")
