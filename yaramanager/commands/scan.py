@@ -35,8 +35,10 @@ def scan(tag: str, name: str, timeout: int, no_progress: bool, csv: bool, file: 
     yb = YaraBuilder()
     for rule in rules:
         rule.add_to_yarabuilder(yb)
-    path, _ = write_ruleset_to_tmp_file(yb)
-    ruleset_compiled = yara.compile(path)
+    ruleset_path, _ = write_ruleset_to_tmp_file(yb)
+    ruleset_compiled = yara.compile(ruleset_path)
+    if not no_progress:
+        c.print(f"Using ruleset {ruleset_path} for scanning. Check the rule file in case any error shows up.")
     with Progress() if not no_progress else c as prog:
         if isinstance(prog, Progress):
             t1 = prog.add_task("Scanning...", total=len(file))
@@ -59,3 +61,4 @@ def scan(tag: str, name: str, timeout: int, no_progress: bool, csv: bool, file: 
                     prog.print(f"{match.rule} ({', '.join(match.tags)}): {path}", highlight=not no_progress)
         if isinstance(prog, Progress):
             prog.update(t1, description="Finished scanning!")
+    os.remove(ruleset_path)
