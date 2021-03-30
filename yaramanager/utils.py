@@ -159,13 +159,21 @@ def write_ruleset_to_file(yb: YaraBuilder, file: Union[int, str]) -> int:
 
 def open_file(path: str, status: Optional[str] = None):
     c = Console()
-    config = load_config()
-    command = config["editor"]
+    env_editor = os.getenv("EDITOR", None)
+    env_disable_status = os.getenv("DISABLE_STATUS", None)
+    if env_editor:
+        command = env_editor.split(" ")
+    else:
+        config = load_config()
+        command = config["editor"]
     command.append(path)
-    if not status:
-        status = f"File {path} opened in external editor..."
-    with c.status(status):
+    if env_disable_status:
         subprocess.call(command)
+    else:
+        if not status:
+            status = f"{path} opened in external editor..."
+        with c.status(status):
+            subprocess.call(command)
 
 
 def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Session] = None) -> List[Rule]:
