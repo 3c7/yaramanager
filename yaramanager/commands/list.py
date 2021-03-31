@@ -3,7 +3,6 @@ from rich.console import Console
 from rich.syntax import Syntax
 from yarabuilder import YaraBuilder
 
-from yaramanager.db.base import Rule, Tag
 from yaramanager.db.session import get_session
 from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag
 
