@@ -39,23 +39,40 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
     """
     r = Rule()
     r.name = obj.get("rule_name", "Unnamed rule")
-    for idx, meta in enumerate(obj.get("metadata", [])):
-        for k, v in meta.items():
+    r.meta = plyara_object_to_meta(obj)
+    r.strings = plyara_object_to_strings(obj)
+    r.imports = plyara_object_to_imports(obj)
+    r.tags = plyara_object_to_tags(obj, session)
+    r.condition = plyara_object_to_condition(obj)
+    return r
+
+
+def plyara_object_to_meta(obj: Dict) -> List[Meta]:
+    """Returns a list of initialized Meta objects based on a plyara object."""
+    meta: List[Meta] = []
+    for idx, m_dict in enumerate(obj.get("metadata", [])):
+        for k, v in m_dict.items():
             m = Meta(
                 key=k,
                 value=v,
                 order=idx
             )
-            r.meta.append(m)
-    for idx, string in enumerate(obj.get("strings", [])):
+            meta.append(m)
+    return meta
+
+
+def plyara_object_to_strings(obj: Dict) -> List[String]:
+    """Returns a list of initialized String objects from a plyara object."""
+    strings: List[String] = []
+    for idx, ply_string in enumerate(obj.get("strings", [])):
         s = String(
-            name=string["name"],
-            value=string["value"],
+            name=ply_string["name"],
+            value=ply_string["value"],
             order=idx,
-            type=string["type"]
+            type=ply_string["type"]
         )
         s.modifiers = 0
-        for mod in string.get("modifiers", []):
+        for mod in ply_string.get("modifiers", []):
             if mod == "ascii":
                 s.modifiers = s.modifiers | 0x1
             elif mod == "wide":
@@ -64,30 +81,48 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
                 s.modifiers = s.modifiers | 0x4
             elif mod == "base64":
                 s.modifiers = s.modifiers | 0x8
-        r.strings.append(s)
-    r.imports = 0
+        strings.append(s)
+    return strings
+
+
+def plyara_object_to_imports(obj: Dict) -> int:
+    """Returns an integer representing imported yara modules."""
+    imports = 0
     for imp in obj.get("imports", []):
         if imp == "pe":
-            r.imports = r.imports | 0x1
+            imports = imports | 0x1
         elif imp == "elf":
-            r.imports = r.imports | 0x2
+            imports = imports | 0x2
         elif imp == "math":
-            r.imports = r.imports | 0x4
+            imports = imports | 0x4
         elif imp == "hash":
-            r.imports = r.imports | 0x8
+            imports = imports | 0x8
         elif imp == "vt":
-            r.imports = r.imports | 0x10
+            imports = imports | 0x10
+    return imports
+
+
+def plyara_object_to_tags(obj: Dict, session: Optional[Session] = None) -> List[Tag]:
+    """Returns a list of initialized Tag objects based on a plyara dict"""
+    tags: List[Tag] = []
+    if not session:
+        session = get_session()
+
     for tag in obj.get("tags", []):
         t = session.query(Tag).filter(Tag.name == tag).first()
         if t:
-            r.tags.append(t)
+            tags.append(t)
         else:
             t = Tag(
                 name=tag
             )
-            r.tags.append(t)
-    r.condition = obj["raw_condition"].split("\n", 1)[1]
-    return r
+            tags.append(t)
+    return tags
+
+
+def plyara_object_to_condition(obj: Dict) -> str:
+    """Returns condition string from plyara object"""
+    return obj["raw_condition"].split("\n", 1)[1]
 
 
 def parse_rule(rule: str) -> Union[Dict, List]:
