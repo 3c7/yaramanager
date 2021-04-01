@@ -2,15 +2,39 @@ import click
 from rich.console import Console
 from rich.syntax import Syntax
 from rich.table import Table
+from sqlalchemy.sql import and_, or_
 from yarabuilder import YaraBuilder
 
-from yaramanager.db.base import String
+from yaramanager.db.base import Meta, Rule, String
 from yaramanager.db.session import get_session
+from yaramanager.utils import rules_to_table, rules_to_highlighted_string
 
 
 @click.group(help="Searches through your rules.")
 def search():
     pass
+
+
+@search.command(help="Wilcard search in rule names and descriptions.")
+@click.option("-r", "--raw", is_flag=True, help="Output rules instead of the string table.")
+@click.argument("search_term")
+def rule(raw: bool, search_term: str):
+    c = Console()
+    session = get_session()
+    rules = session.query(Rule).select_from(Meta).join(Rule.meta).filter(
+        or_(
+            Rule.name.like(f"%{search_term}%"),
+            and_(
+                Meta.key.like("description"),
+                Meta.value.like(f"%{search_term}%")
+            )
+        )
+    ).all()
+    if not raw:
+        table = rules_to_table(rules)
+        c.print(table)
+    else:
+        c.print(rules_to_highlighted_string(rules))
 
 
 @search.command(help="Search for strings. You can use SQL wildcard syntax (%).")

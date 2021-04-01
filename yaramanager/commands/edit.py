@@ -13,7 +13,12 @@ from yaramanager.utils import (
     write_ruleset_to_tmp_file,
     get_rule_by_identifier,
     read_rulefile,
-    plyara_obj_to_rule
+    plyara_object_to_meta,
+    plyara_object_to_strings,
+    plyara_object_to_condition,
+    plyara_object_to_imports,
+    plyara_object_to_tags,
+open_file
 )
 
 
@@ -32,9 +37,8 @@ def edit(identifier: Union[int, str]):
     rule.add_to_yarabuilder(yb)
     path, _ = write_ruleset_to_tmp_file(yb)
     hash = get_md5(path)
-    with c.status(f"{rule.name} opened in external editor..."):
-        subprocess.call(["codium", "-w", path])
-        edit_hash = get_md5(path)
+    open_file(path, f"{rule.name} opened in external editor...")
+    edit_hash = get_md5(path)
 
     if hash == edit_hash:
         c.print(f"No change detected...")
@@ -44,14 +48,11 @@ def edit(identifier: Union[int, str]):
         if not 0 < len(edited_rule) < 2:
             ec.print("Edited rule file must contain exactly one yara rule.")
             exit(-1)
-        edited_rule = plyara_obj_to_rule(edited_rule[0], session)
-        rule.name = edited_rule.name
-        rule.meta = edited_rule.meta
-        rule.imports = edited_rule.imports
-        rule.strings = edited_rule.strings
-        rule.tags = edited_rule.tags
-        session.add(rule)
-        # Removes edited rule from session, otherwise a copy of the rule would be created
-        session.delete(edited_rule)
+        rule.name = edited_rule[0].get("rule_name", "Unnamed rule")
+        rule.meta = plyara_object_to_meta(edited_rule[0])
+        rule.imports = plyara_object_to_imports(edited_rule[0])
+        rule.strings = plyara_object_to_strings(edited_rule[0])
+        rule.tags = plyara_object_to_tags(edited_rule[0], session)
+        rule.condition = plyara_object_to_condition(edited_rule[0])
         session.commit()
     os.remove(path)
