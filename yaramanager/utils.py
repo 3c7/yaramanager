@@ -8,7 +8,8 @@ from tempfile import mkstemp
 from typing import Dict, List, Union, Tuple, Optional
 
 from plyara import Plyara
-from rich.console import Console, Text
+from rich.console import Console
+from rich.syntax import Syntax
 from rich.table import Table
 from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
@@ -258,6 +259,15 @@ def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
                 row.append(rule.get_meta_value(column, default="None"))
         table.add_row(*row)
     return table
+
+
+def rules_to_highlighted_string(rules: List[Rule]):
+    yb = YaraBuilder()
+    for rule in rules:
+        if rule.name not in yb.yara_rules.keys():
+            rule.add_to_yarabuilder(yb)
+    # As there is no yara lexer available in pygments, we're usign python here.
+    return Syntax(yb.build_rules(), "python", background_color="default")
 
 
 def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List, int]:

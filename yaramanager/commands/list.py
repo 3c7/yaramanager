@@ -4,7 +4,7 @@ from rich.syntax import Syntax
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag
+from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag, rules_to_highlighted_string
 
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
@@ -21,13 +21,6 @@ def list(tag: str, raw: bool, name: str, ensure: bool):
         c.print(f"Query returned empty list of rules.")
     else:
         if raw:
-            yb = YaraBuilder()
-            for rule in rules:
-                if rule.name in yb.yara_rules.keys():
-                    ec.print(f"Rule name {rule.name} is duplicate. Skipping...")
-                    continue
-                rule.add_to_yarabuilder(yb)
-            syntax = Syntax(yb.build_rules(), "python", background_color="default")
-            c.print(syntax)
+            c.print(rules_to_highlighted_string(rules))
         else:
             c.print(rules_to_table(rules, ensure=ensure))
