@@ -25,6 +25,14 @@ init_config = {
             "TLP": "tlp",
             "Created": "created",
             "Modified": "modified"
+        },
+        "ensure": {
+            "ensure_meta": [
+                "author",
+                "tlp",
+                "description"
+            ],
+            "ensure_tag": True
         }
     }
 }
