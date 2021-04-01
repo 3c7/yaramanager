@@ -17,7 +17,8 @@ from yaramanager.utils import (
     plyara_object_to_strings,
     plyara_object_to_condition,
     plyara_object_to_imports,
-    plyara_object_to_tags
+    plyara_object_to_tags,
+open_file
 )
 
 
@@ -36,9 +37,8 @@ def edit(identifier: Union[int, str]):
     rule.add_to_yarabuilder(yb)
     path, _ = write_ruleset_to_tmp_file(yb)
     hash = get_md5(path)
-    with c.status(f"{rule.name} opened in external editor..."):
-        subprocess.call(["codium", "-w", path])
-        edit_hash = get_md5(path)
+    open_file(path, f"{rule.name} opened in external editor...")
+    edit_hash = get_md5(path)
 
     if hash == edit_hash:
         c.print(f"No change detected...")
