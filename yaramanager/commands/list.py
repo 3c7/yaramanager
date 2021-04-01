@@ -11,7 +11,8 @@ from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag
 @click.option("--tag", "-t", help="Only display rules with given tag.")
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--name", "-n", help="Only display rules containing [NAME].")
-def list(tag: str, raw: bool, name: str):
+@click.option("--ensure", "-e", is_flag=True, help="Ensure meta fields and tags.")
+def list(tag: str, raw: bool, name: str, ensure: bool):
     c, ec = Console(), Console(stderr=True, style="bold yellow")
     session = get_session()
     rules, count = filter_rules_by_name_and_tag(name, tag, session)
@@ -29,4 +30,4 @@ def list(tag: str, raw: bool, name: str):
             syntax = Syntax(yb.build_rules(), "python", background_color="default")
             c.print(syntax)
         else:
-            c.print(rules_to_table(rules))
+            c.print(rules_to_table(rules, ensure=ensure))

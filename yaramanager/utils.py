@@ -8,7 +8,7 @@ from tempfile import mkstemp
 from typing import Dict, List, Union, Tuple, Optional
 
 from plyara import Plyara
-from rich.console import Console
+from rich.console import Console, Text
 from rich.table import Table
 from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
@@ -187,9 +187,12 @@ def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Sessio
     return rules.all()
 
 
-def rules_to_table(rules: List[Rule]) -> Table:
+def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
     """Creates a rich.table.Table object from s list of rules."""
-    meta_columns = load_config().get("meta", {})
+    config = load_config()
+    meta_columns = config.get("meta", {})
+    ensure_meta = config.get("ensure", {}).get("ensure_meta", [])
+    ensure_tags = config.get("ensure", {}).get("ensure_tag", True)
     table = Table()
     table.add_column("ID")
     table.add_column("Name")
@@ -198,10 +201,20 @@ def rules_to_table(rules: List[Rule]) -> Table:
         table.add_column(column)
 
     for rule in rules:
+        if ensure and ensure_tags and len(rule.tags) == 0:
+            tags = Text("No tags given!", style="red")
+        else:
+            tags = ", ".join([tag.name for tag in rule.tags])
+
+        if ensure and ensure_meta and not all(len(rule.get_meta_value(meta, "")) > 0 for meta in ensure_meta):
+            name = Text(rule.name + " (missing attributes)", style="red")
+        else:
+            name = rule.name
+
         row = [
             str(rule.id),
-            rule.name,
-            ", ".join([tag.name for tag in rule.tags])
+            name,
+            tags
         ]
         for column in meta_columns.values():
             row.append(rule.get_meta_value(column, default="None"))
