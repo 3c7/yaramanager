@@ -231,28 +231,31 @@ def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
     table = Table()
     table.add_column("ID")
     table.add_column("Name")
-    table.add_column("Tags")
+    if ensure_tags:
+        table.add_column("Tags [yellow]:warning:")
+    else:
+        table.add_column("Tags")
     for column in meta_columns.keys():
-        table.add_column(column)
+        c_header = column + " [yellow]:warning:" if meta_columns[column] in ensure_meta and ensure_meta else column
+        table.add_column(c_header)
 
     for rule in rules:
         if ensure and ensure_tags and len(rule.tags) == 0:
-            tags = Text("No tags given!", style="red")
+            tags = "[yellow]:warning:"
         else:
             tags = ", ".join([tag.name for tag in rule.tags])
 
-        if ensure and ensure_meta and not all(len(rule.get_meta_value(meta, "")) > 0 for meta in ensure_meta):
-            name = Text(rule.name + " (missing attributes)", style="red")
-        else:
-            name = rule.name
-
         row = [
             str(rule.id),
-            name,
+            rule.name,
             tags
         ]
         for column in meta_columns.values():
-            row.append(rule.get_meta_value(column, default="None"))
+            m_value = rule.get_meta_value(column, default="None")
+            if ensure and column in ensure_meta and m_value == "None":
+                row.append("[yellow]:warning:")
+            else:
+                row.append(rule.get_meta_value(column, default="None"))
         table.add_row(*row)
     return table
 
