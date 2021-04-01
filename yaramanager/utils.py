@@ -232,12 +232,12 @@ def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
     table = Table()
     table.add_column("ID")
     table.add_column("Name")
-    if ensure_tags:
+    if ensure and ensure_tags:
         table.add_column("Tags [yellow]:warning:")
     else:
         table.add_column("Tags")
     for column in meta_columns.keys():
-        c_header = column + " [yellow]:warning:" if meta_columns[column] in ensure_meta and ensure_meta else column
+        c_header = column + " [yellow]:warning:" if meta_columns[column] in ensure_meta and ensure else column
         table.add_column(c_header)
 
     for rule in rules:
