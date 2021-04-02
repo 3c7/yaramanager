@@ -4,7 +4,7 @@ import click
 from rich.console import Console
 from yarabuilder import YaraBuilder
 
-from yaramanager.utils import get_rule_by_identifier
+from yaramanager.utils.utils import get_rule_by_identifier
 
 
 @click.command(help="Get rules from the database.")

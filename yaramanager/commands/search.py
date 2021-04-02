@@ -7,7 +7,7 @@ from yarabuilder import YaraBuilder
 
 from yaramanager.db.base import Meta, Rule, String
 from yaramanager.db.session import get_session
-from yaramanager.utils import rules_to_table, rules_to_highlighted_string
+from yaramanager.utils.utils import rules_to_table, rules_to_highlighted_string
 
 
 @click.group(help="Searches through your rules.")

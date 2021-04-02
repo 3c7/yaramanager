@@ -2,7 +2,7 @@ from pprint import pprint
 
 import click
 
-from yaramanager.utils import print_rule, parse_rule_file
+from yaramanager.utils.utils import print_rule, parse_rule_file
 
 
 @click.command(help="Parses rule files. This is mainly used for development and debugging purposes.", deprecated=True)

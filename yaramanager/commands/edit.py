@@ -1,5 +1,4 @@
 import os
-import subprocess
 from sys import stderr
 from typing import Union
 
@@ -8,7 +7,7 @@ from rich.console import Console
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import (
+from yaramanager.utils.utils import (
     get_md5,
     write_ruleset_to_tmp_file,
     get_rule_by_identifier,
