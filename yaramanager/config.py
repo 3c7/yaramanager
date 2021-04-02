@@ -6,16 +6,21 @@ from typing import Dict
 import toml
 from rich.console import Console
 
+from yaramanager.utils.platform import get_user_path, get_config_path
+
+config_dir = get_user_path()
+config_file = get_config_path()
+
 init_config = {
     "yaramanager": {
         "databases": [
             {
                 "driver": "sqlite",
-                "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data.db")
+                "path": os.path.join(config_dir, "data.db")
             },
             {
                 "driver": "sqlite",
-                "path": os.path.join(os.getenv("HOME"), ".config", "yaramanager", "data_alt.db")
+                "path": os.path.join(config_dir, "alt_data.db")
             }
         ],
         "editor": ["codium", "-w"],
@@ -36,8 +41,6 @@ init_config = {
         }
     }
 }
-config_dir = os.path.join(os.getenv("HOME"), ".config", "yaramanager")
-config_file = os.path.join(config_dir, "config.toml")
 
 
 class Config(OrderedDict):
