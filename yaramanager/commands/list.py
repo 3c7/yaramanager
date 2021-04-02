@@ -2,7 +2,7 @@ import click
 from rich.console import Console
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import rules_to_table, filter_rules_by_name_and_tag, rules_to_highlighted_string
+from yaramanager.utils.utils import rules_to_table, filter_rules_by_name_and_tag, rules_to_highlighted_string
 
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")

@@ -8,7 +8,7 @@ from rich.progress import Progress
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import filter_rules_by_name_and_tag, write_ruleset_to_tmp_file
+from yaramanager.utils.utils import filter_rules_by_name_and_tag, write_ruleset_to_tmp_file
 
 
 @click.command(help="Scan files using your rulesets. Please be aware that this program should not be used anywhere "

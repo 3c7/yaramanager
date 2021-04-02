@@ -5,7 +5,7 @@ from rich.syntax import Syntax
 from rich.prompt import Confirm
 
 from yaramanager.config import load_config, config_file, init_config, write_config
-from yaramanager.utils import open_file
+from yaramanager.utils.utils import open_file
 
 CONFIG = load_config()
 

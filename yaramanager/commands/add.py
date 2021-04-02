@@ -6,7 +6,7 @@ from rich.progress import Progress
 
 from yaramanager.db.base import Rule
 from yaramanager.db.session import get_session
-from yaramanager.utils import parse_rule_file, plyara_obj_to_rule
+from yaramanager.utils.utils import parse_rule_file, plyara_obj_to_rule
 
 
 @click.command(help="Add a new rule to the database. Use - as path for reading from stdin.")

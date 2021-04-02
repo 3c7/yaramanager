@@ -4,7 +4,7 @@ import click
 from rich.console import Console
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import parse_rule, plyara_obj_to_rule
+from yaramanager.utils.utils import parse_rule, plyara_obj_to_rule
 
 
 @click.command(help="Read rules from stdin.")
