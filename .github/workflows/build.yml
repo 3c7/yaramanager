@@ -1,0 +1,75 @@
+# Shamelessly copied from github.com/fireeye/capa
+
+name: build
+
+on:
+  release:
+    types: [edited, published]
+
+jobs:
+  build:
+    name: Build package for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-16.04
+            # use old linux so that the shared library versioning is more portable
+            artifact_name: ym
+            asset_name: linux
+          - os: windows-2019
+            artifact_name: ym.exe
+            asset_name: windows
+          - os: macos-10.15
+            artifact_name: ym
+            asset_name: macos
+    steps:
+      - name: Checkout yaramanager
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Poetry
+        run: pip install 'poetry==1.1.5'
+      - name: Install dependencies
+        run: poetry install
+      - name: Build standalone executable
+        run: pyinstaller .github/pyinstaller/pyinstaller.spec
+      - name: Run `ym version`
+        run: dist/ym version
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.asset_name }}
+          path: dist/${{ matrix.artifact_name }}
+
+  zip:
+    name: zip ${{ matrix.asset_name }}
+    runs-on: ubuntu-20.04
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - asset_name: linux
+            artifact_name: ym
+          - asset_name: windows
+            artifact_name: ym.exe
+          - asset_name: macos
+            artifact_name: ym
+    steps:
+      - name: Download ${{ matrix.asset_name }}
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.asset_name }}
+      - name: Set executable flag
+        run: chmod +x ${{ matrix.artifact_name }}
+      - name: Set zip name
+        run: echo "zip_name=yaramanager-${GITHUB_REF#refs/tags/}-${{ matrix.asset_name }}.zip" >> $GITHUB_ENV
+      - name: Zip ${{ matrix.artifact_name }} into ${{ env.zip_name }}
+        run: zip ${{ env.zip_name }} ${{ matrix.artifact_name }}
+      - name: Upload ${{ env.zip_name }} to GH Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.zip_name }}
+          tag: ${{ github.ref }}
