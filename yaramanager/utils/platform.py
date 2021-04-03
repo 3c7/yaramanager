@@ -19,7 +19,7 @@ def is_darwin() -> bool:
 def get_user_path() -> str:
     """Returns yaramanager path in user dir."""
     u_path = None
-    if is_linux():
+    if is_linux() or is_darwin():
         u_path = os.path.abspath(os.path.join(os.getenv("HOME"), ".config", "yaramanager"))
     elif is_win():
         u_path = os.path.abspath(os.path.join(os.getenv("APPDATA"), "yaramanager"))
