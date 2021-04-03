@@ -6,6 +6,12 @@ from rich.console import Console
 
 from yaramanager import version as ver
 
+try:
+    from yaramanager import commit
+    IS_BIN = True
+except ImportError:
+    IS_BIN = False
+
 
 @click.command(help="Displays the current version.")
 @click.option("-c", "--check", is_flag=True, help="Checks version via Github API.")
@@ -13,15 +19,16 @@ def version(check):
     c = Console(highlight=False)
     github_ver = None
     c.print("YaraManager", end="")
+    ver_str = ver + f" (commit: {commit})" if IS_BIN else ver
 
     if check:
         github_ver = get_latest_release_tag()
         if github_ver == ver:
-            c.print(f" v{ver}", style="bold green")
+            c.print(f" v{ver_str}", style="bold green")
         else:
-            c.print(f" v{ver} (out of date, most recent version is v.{github_ver})", style="bold yellow")
+            c.print(f" v{ver_str} (out of date, most recent version is v.{github_ver})", style="bold yellow")
     else:
-        c.print(f" v{ver}")
+        c.print(f" v{ver_str}")
     c.print(f"https://github.com/3c7/yaramanager/releases/tag/{github_ver or ver}")
 
 
