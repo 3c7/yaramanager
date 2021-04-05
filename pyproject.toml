@@ -26,9 +26,9 @@ classifiers = [
 ]
 include = [
     "LICENSE",
-    "alembic.ini",
-    "alembic",
-    "resources"
+    "alembic/*",
+    "alembic/versions/*",
+    "resources/*"
 ]
 
 [tool.poetry.dependencies]
