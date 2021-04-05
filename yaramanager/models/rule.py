@@ -1,12 +1,13 @@
 from sys import stderr
-from typing import Any, List, Union
+from typing import Any, List
 
-from sqlalchemy import Column, String, Integer, Text
+from sqlalchemy import Column, String, Integer, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.base_class import Base
 from yaramanager.models.tables import tags_rules
+from yaramanager.config import load_config
 
 
 class Rule(Base):
@@ -17,6 +18,8 @@ class Rule(Base):
     condition = Column(Text)
     imports = Column(Integer)
     tags = relationship("Tag", back_populates="rules", secondary=tags_rules)
+    ruleset_id = Column(Integer, ForeignKey("ruleset.id"))
+    ruleset = relationship("Ruleset", back_populates="rules")
 
     @property
     def import_list(self) -> List[str]:
@@ -53,6 +56,9 @@ class Rule(Base):
         >>> print(yb.build_rules())
         """
         yb.create_rule(self.name)
+        key = load_config().get("ruleset_meta_key", "ruleset")
+        if self.ruleset:
+            yb.add_meta(self.name, key, self.ruleset.name)
         for meta in self.meta:
             yb.add_meta(
                 self.name,

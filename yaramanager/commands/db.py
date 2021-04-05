@@ -6,7 +6,7 @@ from alembic.config import Config
 from rich.console import Console
 from rich.prompt import Confirm
 
-from yaramanager.config import load_config, write_config
+from yaramanager.config import load_config, change_db
 from yaramanager.db.session import get_path
 from yaramanager.utils.output import debug_print
 
@@ -20,7 +20,7 @@ def db():
 def get():
     c = Console()
     config = load_config()
-    c.print(f"Selected database: {config['databases'][config['db']]['path']}", highlight=False)
+    c.print(f"Selected database: {config['db']['databases'][config['db']['selected']]['path']}", highlight=False)
 
 
 @db.command(help="Changes database.")
@@ -28,11 +28,10 @@ def get():
 def set(db_num):
     c, ec = Console(), Console(stderr=True, style="bold red")
     config = load_config()
-    if db_num > len(config["databases"]) - 1:
+    if db_num > len(config["db"]["databases"]) - 1:
         ec.print("Number of DB to chose is higher than number of available databases.")
         exit(-1)
-    config["db"] = db_num
-    write_config(config)
+    change_db(db_num)
 
 
 @db.command(help="Database initialization or schema upgrade.")
