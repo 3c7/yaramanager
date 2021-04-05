@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from yarabuilder import YaraBuilder
 
 from yaramanager.config import load_config
-from yaramanager.db.base import Rule, Meta, String, Tag
+from yaramanager.db.base import Rule, Meta, String, Tag, Ruleset
 from yaramanager.db.session import get_session
 
 
@@ -45,6 +45,8 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
     r.imports = plyara_object_to_imports(obj)
     r.tags = plyara_object_to_tags(obj, session)
     r.condition = plyara_object_to_condition(obj)
+    ruleset = plyara_object_to_ruleset(obj, session)
+    r.ruleset = ruleset
     return r
 
 
@@ -53,6 +55,8 @@ def plyara_object_to_meta(obj: Dict) -> List[Meta]:
     meta: List[Meta] = []
     for idx, m_dict in enumerate(obj.get("metadata", [])):
         for k, v in m_dict.items():
+            if k.lower() == "ruleset":
+                continue
             m = Meta(
                 key=k,
                 value=v,
@@ -89,16 +93,17 @@ def plyara_object_to_strings(obj: Dict) -> List[String]:
 def plyara_object_to_imports(obj: Dict) -> int:
     """Returns an integer representing imported yara modules."""
     imports = 0
+    conditions = plyara_object_to_condition(obj)
     for imp in obj.get("imports", []):
-        if imp == "pe":
+        if imp == "pe" and "pe." in conditions:
             imports = imports | 0x1
-        elif imp == "elf":
+        elif imp == "elf" and "elf." in conditions:
             imports = imports | 0x2
-        elif imp == "math":
+        elif imp == "math" and "math." in conditions:
             imports = imports | 0x4
-        elif imp == "hash":
+        elif imp == "hash" and "hash." in conditions:
             imports = imports | 0x8
-        elif imp == "vt":
+        elif imp == "vt" and "vt." in conditions:
             imports = imports | 0x10
     return imports
 
@@ -126,6 +131,21 @@ def plyara_object_to_condition(obj: Dict) -> str:
     return obj["raw_condition"].split("\n", 1)[1]
 
 
+def plyara_object_to_ruleset(obj: Dict, session: Session) -> Union[Ruleset, None]:
+    """Returns ruleset object, if ruleset is given as meta tag, or None"""
+    key = load_config().get("ruleset_meta_key", "ruleset")
+    for m_dict in obj.get("metadata", []):
+        for k, v in m_dict.items():
+            if k != key:
+                continue
+
+            ruleset = session.query(Ruleset).filter(Ruleset.name == v).first()
+            if not ruleset:
+                ruleset = Ruleset(name=v)
+            return ruleset
+    return None
+
+
 def parse_rule(rule: str) -> Union[Dict, List]:
     ply = Plyara()
     return ply.parse_string(rule)
@@ -143,7 +163,7 @@ def print_rule(rules: Union[Dict, List]) -> str:
     for rule in rules:
         rn = rule["rule_name"]
         yb.create_rule(rn)
-        for mdata in rule["metadata"]:
+        for mdata in rule.get("metadata", []):
             for k, v in mdata.items():
                 yb.add_meta(rn, k, v)
         for tag in rule["tags"]:
@@ -194,14 +214,17 @@ def write_ruleset_to_file(yb: YaraBuilder, file: Union[int, str]) -> int:
 
 
 def open_file(path: str, status: Optional[str] = None):
-    c = Console()
+    c, ec = Console(), Console(stderr=True, style="bold red")
+    config = load_config()
     env_editor = os.getenv("EDITOR", None)
     env_disable_status = os.getenv("DISABLE_STATUS", None)
     if env_editor:
         command = env_editor.split(" ")
     else:
-        config = load_config()
-        command = config["editor"]
+        command = config.get("editor", None)
+        if not command:
+            ec.print("Editor not given. Please set editor config value or use EDITOR environment variable.")
+            exit(-1)
     command.append(path)
     if env_disable_status:
         subprocess.call(command)
@@ -223,6 +246,17 @@ def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Sessio
     return rules.all()
 
 
+def get_ruleset_by_identifier(identifier: Union[str, int], session: Optional[Session] = None) -> Ruleset:
+    if not session:
+        session = get_session()
+
+    ruleset = session.query(Ruleset)
+    if isinstance(identifier, int) or re.fullmatch(r"^\d+$", identifier):
+        return ruleset.get(int(identifier))
+    else:
+        return ruleset.filter(Ruleset.name.like(identifier)).first()
+
+
 def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
     """Creates a rich.table.Table object from s list of rules."""
     config = load_config()
@@ -232,6 +266,7 @@ def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
     table = Table()
     table.add_column("ID")
     table.add_column("Name")
+    table.add_column("Ruleset")
     if ensure and ensure_tags:
         table.add_column("Tags [yellow]:warning:")
     else:
@@ -249,6 +284,7 @@ def rules_to_table(rules: List[Rule], ensure: Optional[bool] = False) -> Table:
         row = [
             str(rule.id),
             rule.name,
+            rule.ruleset.name if rule.ruleset else "None",
             tags
         ]
         for column in meta_columns.values():

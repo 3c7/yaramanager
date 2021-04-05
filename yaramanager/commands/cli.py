@@ -13,6 +13,7 @@ from .get import get
 from .list import list
 from .parse import parse
 from .read import read
+from .ruleset import ruleset
 from .scan import scan
 from .search import search
 from .stats import stats
@@ -39,6 +40,7 @@ cli.add_command(get)
 cli.add_command(list)
 cli.add_command(parse)
 cli.add_command(read)
+cli.add_command(ruleset)
 cli.add_command(scan)
 cli.add_command(search)
 cli.add_command(stats)

@@ -17,7 +17,8 @@ from yaramanager.utils.utils import (
     plyara_object_to_condition,
     plyara_object_to_imports,
     plyara_object_to_tags,
-open_file
+    open_file,
+    plyara_object_to_ruleset
 )
 
 
@@ -53,5 +54,6 @@ def edit(identifier: Union[int, str]):
         rule.strings = plyara_object_to_strings(edited_rule[0])
         rule.tags = plyara_object_to_tags(edited_rule[0], session)
         rule.condition = plyara_object_to_condition(edited_rule[0])
+        rule.ruleset = plyara_object_to_ruleset(edited_rule[0], session)
         session.commit()
     os.remove(path)

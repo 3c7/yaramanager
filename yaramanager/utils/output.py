@@ -10,6 +10,7 @@ def debug_print(msg: str, c: Optional[Console] = None) -> None:
     if not debug:
         return
     if not c:
-        c = Console()
+        # Use stderr so piped output is still valid
+        c = Console(stderr=True)
 
     c.print("[cyan]DEBUG[reset]: " + msg)

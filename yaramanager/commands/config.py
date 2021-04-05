@@ -1,10 +1,11 @@
 import io
+
 import click
 from rich.console import Console
-from rich.syntax import Syntax
 from rich.prompt import Confirm
+from rich.syntax import Syntax
 
-from yaramanager.config import load_config, config_file, init_config, write_config
+from yaramanager.config import load_config, config_file, write_initial_config
 from yaramanager.utils.utils import open_file
 
 CONFIG = load_config()
@@ -44,4 +45,4 @@ def dump():
 def reset():
     confirm = Confirm.ask("Do you really want to reset the config?")
     if confirm:
-        write_config(init_config)
+        write_initial_config()
