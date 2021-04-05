@@ -6,7 +6,7 @@ from rich.console import Console
 from yarabuilder import YaraBuilder
 
 from yaramanager.db.session import get_session
-from yaramanager.utils import filter_rules_by_name_and_tag
+from yaramanager.utils.utils import filter_rules_by_name_and_tag
 
 
 @click.command(help="Export rules from the database. The set of rules can be filtered through commandline options. "

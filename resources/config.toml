@@ -1,0 +1,43 @@
+# This is the yaramanager configuration file.
+[yaramanager]
+## Editor
+# editor contains the command used to start the editor. Note that this must be a list of the command and the needed
+# parameters, e.g. `editor = ["codium", "-w"]`.
+editor = [ "codium", "-w" ]
+## Debug
+# Enables or disables debug output.
+debug = false
+## Ruleset Meta Key
+# ruleset_meta_key contains the key which should be used for ruleset detection.
+ruleset_meta_key = "ruleset"
+
+## DB
+# The DB section contains the database configuration.
+[yaramanager.db]
+# Selected
+# The currently selected db from the list of databases below
+selected = 0
+# Databases
+# A list of databases. Every database needs to define a driver and a path, such as
+#
+# [[yaramanager.db.databases]]
+# driver = "sqlite"
+# path = "/home/user/.config/yaramanager/data.db"
+
+# {init_database}
+
+## Meta
+# This section contains all meta keys that should be printed in table views. The format is:
+# Heading = "meta key"
+[yaramanager.meta]
+Author = "author"
+TLP = "tlp"
+Created = "created"
+Modified = "modified"
+
+## Ensure
+# Rule attributes to ensure (ym list --eensure|-e). ensure_meta contains a list of meta attributes, ensure_tag just
+# requires tags set.
+[yaramanager.ensure]
+ensure_meta = [ "author", "tlp", "description" ]
+ensure_tag = true

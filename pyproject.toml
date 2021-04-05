@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yaramanager"
-version = "0.1.6"
+version = "0.1.7"
 description = "CLI tool to manage your yara rules"
 authors = ["3c7 <3c7@posteo.de>"]
 license = "MIT"
@@ -27,7 +27,8 @@ classifiers = [
 include = [
     "LICENSE",
     "alembic.ini",
-    "alembic"
+    "alembic",
+    "resources"
 ]
 
 [tool.poetry.dependencies]
@@ -43,6 +44,7 @@ requests = "^2.25.1"
 yara-python = "^4.0.5"
 
 [tool.poetry.dev-dependencies]
+pyinstaller = "^4.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
