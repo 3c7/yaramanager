@@ -1,6 +1,7 @@
 import io
 import os
 import re
+import sys
 from collections import OrderedDict
 from typing import Dict
 
@@ -53,11 +54,14 @@ def load_config() -> Config:
 def create_initial_config() -> str:
     """Reads initial config from resources directory."""
     config_toml = ""
+    db_path = os.path.join(config_dir, 'data.db')
+    if sys.platform == "win32":
+        db_path = db_path.replace("\\", "\\\\")
     with io.open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "resources", "config.toml"))) as fh:
         for line in fh.readlines():
             config_toml += line.replace("# {init_database}", (
                 f"[[yaramanager.db.databases]]\ndriver = \"sqlite\"\n"
-                f"path = \"{os.path.join(config_dir, 'data.db')}\""
+                f"path = \"{db_path}\""
             ))
     return config_toml
 
