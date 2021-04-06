@@ -4,5 +4,4 @@ venv
 .idea
 build
 dist
-*.spec
 alembic_local.ini
