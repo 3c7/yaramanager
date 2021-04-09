@@ -9,7 +9,7 @@ from yaramanager.db.session import get_session
 from yaramanager.utils.utils import parse_rule_file, plyara_obj_to_rule
 
 
-@click.command(help="Add a new rule to the database. Use - as path for reading from stdin.")
+@click.command(help="Add a new rule to the database.")
 @click.argument("paths", type=click.Path(exists=True, dir_okay=False), nargs=-1)
 def add(paths: List[str]):
     session = get_session()
