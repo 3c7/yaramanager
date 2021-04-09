@@ -128,7 +128,7 @@ def plyara_object_to_tags(obj: Dict, session: Optional[Session] = None) -> List[
 
 def plyara_object_to_condition(obj: Dict) -> str:
     """Returns condition string from plyara object"""
-    return obj["raw_condition"].split("\n", 1)[1]
+    return obj["raw_condition"].split(":", 1)[1].strip()
 
 
 def plyara_object_to_ruleset(obj: Dict, session: Session) -> Union[Ruleset, None]:
