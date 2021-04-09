@@ -3,7 +3,7 @@ import os
 import re
 import subprocess
 from hashlib import md5
-from sys import stderr
+from sys import stderr, exit
 from tempfile import mkstemp
 from typing import Dict, List, Union, Tuple, Optional
 
@@ -233,6 +233,20 @@ def open_file(path: str, status: Optional[str] = None):
             status = f"{path} opened in external editor..."
         with c.status(status):
             subprocess.call(command)
+
+
+def open_temp_file_with_template():
+    ec = Console(stderr=True, style="bold red")
+    config = load_config()
+    fd_temp, path = mkstemp(".yar")
+    with os.fdopen(fd_temp, "w") as fh:
+        try:
+            fh.write(config["template"])
+        except KeyError:
+            ec.print("Template is missing. Please set template variable in config.")
+            exit(-1)
+    open_file(path)
+    return path
 
 
 def get_rule_by_identifier(identifier: Union[str, int], session: Optional[Session] = None) -> List[Rule]:

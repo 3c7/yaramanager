@@ -11,6 +11,34 @@ debug = false
 # ruleset_meta_key contains the key which should be used for ruleset detection.
 ruleset_meta_key = "ruleset"
 
+## Template
+# Template used for creating new rules.
+template = """
+rule apt_ZZ_RuleTemplate : apt zz {
+    meta:
+        author = "My Name"
+        description = "This is a rule template that will be used for creating new rules."
+        tlp = "white"
+        ruleset = "Template 1"
+
+    strings:
+        $x1 = "Must1" ascii
+        $x2 = "Must2" ascii
+        $x3 = "Must3" wide
+
+        $s1 = "Should1" ascii
+        $s2 = "Should2" ascii
+        $s3 = "Should3" ascii
+        $s4 = "Should4" ascii
+        $s5 = "Should5" ascii
+    condition:
+        uint16(0) == 0x5a4d and (
+            all of ($x*) and 2 of ($s*) or
+            all of ($s*)
+        )
+}
+"""
+
 ## DB
 # The DB section contains the database configuration.
 [yaramanager.db]

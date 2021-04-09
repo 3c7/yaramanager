@@ -11,6 +11,7 @@ from .edit import edit
 from .export import export
 from .get import get
 from .list import list
+from .new import new
 from .parse import parse
 from .read import read
 from .ruleset import ruleset
@@ -38,6 +39,7 @@ cli.add_command(edit)
 cli.add_command(export)
 cli.add_command(get)
 cli.add_command(list)
+cli.add_command(new)
 cli.add_command(parse)
 cli.add_command(read)
 cli.add_command(ruleset)
