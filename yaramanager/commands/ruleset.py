@@ -52,3 +52,20 @@ def get(raw: bool, identifier: str):
         for rule in ruleset.rules:
             rule.add_to_yarabuilder(yb)
         c.print(yb.build_rules())
+
+@ruleset.command(help="Create a new ruleset.")
+@click.argument("name")
+def create(name: str):
+    c, ec = Console(), Console(stderr=True, style="bold red")
+    session = get_session()
+    ruleset = session.query(Ruleset).filter(Ruleset.name == name).first()
+    if ruleset:
+        ec.print("Ruleset with that name already exists.")
+        exit(-1)
+
+    ruleset = Ruleset(
+        name=name
+    )
+    session.add(ruleset)
+    session.commit()
+    c.print("New ruleset added.")

@@ -306,7 +306,7 @@ def rules_to_highlighted_string(rules: List[Rule]):
     return Syntax(yb.build_rules(), "python", background_color="default")
 
 
-def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List, int]:
+def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List[Rule], int]:
     if not session:
         session = get_session()
 
