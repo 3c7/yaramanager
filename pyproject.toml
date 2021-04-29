@@ -41,10 +41,10 @@ alembic = "^1.5.8"
 click = "^7.1.2"
 toml = "^0.10.2"
 requests = "^2.25.1"
-yara-python = "^4.0.5"
+yara-python = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
-pyinstaller = "^4.2"
+pyinstaller = "^4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
