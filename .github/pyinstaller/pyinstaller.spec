@@ -3,7 +3,7 @@ import io
 import subprocess
 
 with io.open("yaramanager/__init__.py", "a") as fh:
-    commit = subprocess.check_output(["git", "describe", "--always", "--tags", "--long"]).decode("utf-8").strip().split("-")[-1]
+    commit = subprocess.check_output(["git", "describe", "--always", "--tags", "--long"]).decode("utf-8").strip().split("-")[-1][1:]
     fh.write(f"commit = \"{commit}\"\n")
 
 a = Analysis(
