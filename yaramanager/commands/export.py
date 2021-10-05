@@ -1,14 +1,11 @@
-import io
-import os
-
-import click
-import yara
-from rich.console import Console
-from yarabuilder import YaraBuilder
 from pathlib import Path
 
+import click
+from rich.console import Console
+
 from yaramanager.db.session import get_session
-from yaramanager.utils.utils import filter_rules_by_name_and_tag, write_ruleset_to_tmp_file
+from yaramanager.models.yarabuilder import YaraBuilder
+from yaramanager.utils.utils import filter_rules_by_name_and_tag
 
 
 @click.command(help="Export rules from the database. The set of rules can be filtered through commandline options. "
@@ -36,23 +33,5 @@ def export(name: str, tag: str, single: bool, compiled: bool, path: str):
     for rule in rules:
         rule.add_to_yarabuilder(yb)
 
-        if not (single or compiled):
-            with io.open(os.path.join(path, rule.name + ".yar"), "w") as fh:
-                fh.write(yb.build_rule(rule.name))
-
-    if single:
-        if path.suffix != ".yar":
-            path = Path(str(path) + ".yar")
-        with io.open(path, "w") as fh:
-            fh.write(yb.build_rules())
-
-    if compiled:
-        if path.suffix == ".yar":
-            path = Path(str(path)[:-4] + ".yac")
-        elif path.suffix == "":
-            path = Path(str(path) + ".yac")
-        tmp_path, size = write_ruleset_to_tmp_file(yb)
-        compiled: yara.Rules = yara.compile(tmp_path)
-        compiled.save(str(path))
-
+    yb.write_rules_to_file(path, single_file=single, compiled=compiled)
     c.print(f"Wrote {len(rules)} rules.")

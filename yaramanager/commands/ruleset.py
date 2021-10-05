@@ -1,15 +1,15 @@
 import io
+from pathlib import Path
 
 import click
-import yara
 from rich.console import Console
 from rich.table import Table
-from yarabuilder import YaraBuilder
+
 from yaramanager.db.base import Ruleset
 from yaramanager.db.session import get_session
+from yaramanager.models.yarabuilder import YaraBuilder
 from yaramanager.utils.utils import get_ruleset_by_identifier, rules_to_table
-from yaramanager.utils.utils import write_ruleset_to_tmp_file
-from pathlib import Path
+
 
 @click.group(help="Manage your rulesets")
 def ruleset():
@@ -58,7 +58,8 @@ def get(raw: bool, identifier: str):
         c.print(yb.build_rules())
 
 
-@ruleset.command(help="Export all rules assigned to a ruleset.")
+@ruleset.command(help="Export all rules assigned to a ruleset. "
+                      "Without -s and -c set, all rules are written as separate files.")
 @click.argument("identifier")
 @click.option("-s", "--single", is_flag=True, help="Write set of rules into a single yara file.")
 @click.option("-c", "--compiled", is_flag=True, help="Write compiled ruleset into a single file.")
@@ -76,10 +77,6 @@ def export(identifier: str, single: bool, compiled: bool, path: str):
         c.print(f"Found no matching rules.")
         exit(-1)
 
-    if path.is_dir():
-        c.print(f"Given path ({path}) is a directory.")
-        exit(-1)
-
     yb = YaraBuilder()
     for rule in ruleset.rules:
         try:
@@ -89,22 +86,9 @@ def export(identifier: str, single: bool, compiled: bool, path: str):
             yb.yara_rules.popitem()
             c.print(f"Error:{rule.name} not exported: {e}")
 
-    if single:
-        if path.suffix != ".yar":
-            path = Path(str(path) + ".yar")
-        with io.open(path, "w") as fh:
-            fh.write(yb.build_rules())
-
-    if compiled:
-        if path.suffix == ".yar":
-            path = Path(str(path)[:-4] + ".yac")
-        elif path.suffix == "":
-            path = Path(str(path) + ".yac")
-        tmp_path, size = write_ruleset_to_tmp_file(yb)
-        compiled: yara.Rules = yara.compile(tmp_path)
-        compiled.save(str(path))
-
+    yb.write_rules_to_file(path, single_file=single, compiled=compiled)
     c.print(f"Wrote {len(ruleset.rules)} rules.")
+
 
 @ruleset.command(help="Create a new ruleset.")
 @click.argument("name")
