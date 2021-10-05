@@ -3,6 +3,8 @@ name: build
 on:
   release:
     types: [edited, published]
+  workflow_dispatch:
+    
 
 jobs:
   build:
