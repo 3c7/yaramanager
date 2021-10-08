@@ -320,7 +320,7 @@ def rules_to_highlighted_string(rules: List[Rule]):
     return Syntax(yb.build_rules(), "python", background_color="default")
 
 
-def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List[Rule], int]:
+def filter_rules_by_name_and_tag(name: str, tag: str, exclude_tag: str, session: Optional[Session] = None) -> Tuple[List[Rule], int]:
     if not session:
         session = get_session()
 
@@ -334,4 +334,13 @@ def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session]
     if count == 0:
         return [], count
     else:
-        return rules.all(), count
+        rules = rules.all()
+
+        # This is hacky. I'd love to implement this in the SQL query itself, but found nothing comparable to the "any"
+        # method which applies to ALL relationships, i.e. to all tags assigned to a rule.
+        if exclude_tag and len(exclude_tag) > 0:
+            filter_rules, rules = rules, []
+            for rule in filter_rules:
+                if not any([tag.name == exclude_tag for tag in rule.tags]):
+                    rules.append(rule)
+        return rules, count
