@@ -1,4 +1,5 @@
 from sys import exit
+from typing import Tuple
 
 import click
 from rich.console import Console
@@ -13,20 +14,20 @@ from yaramanager.utils.utils import (
 
 
 @click.command(help="Lists rules available in DB. Default output is in a table, but raw output can be enabled.")
-@click.option("--tag", "-t", help="Only display rules with given tag.")
-@click.option("--exclude-tag", "-T", help="Exclude rules with given tag.")
+@click.option("--tag", "-t", multiple=True, help="Only display rules with given tag.")
+@click.option("--exclude-tag", "-T", multiple=True, help="Exclude rules with given tag.")
 @click.option("--raw", "-r", is_flag=True, help="Print rules to stdout.")
 @click.option("--name", "-n", help="Only display rules containing [NAME].")
 @click.option("--ensure", "-e", is_flag=True, help="Ensure meta fields and tags.")
 @click.option("--assign", "-a", help="Assign listed rules to ruleset. This has to be either a legitimate Ruleset id or "
                                      "a Ruleset name.")
-def list(tag: str, exclude_tag: str, raw: bool, name: str, ensure: bool, assign: str):
-    c, ec = Console(), Console(stderr=True, style="bold yellow")
+def list(tag: Tuple[str], exclude_tag: Tuple[str], raw: bool, name: str, ensure: bool, assign: str):
+    c, ec = Console(), Console(stderr=True, style="bold red")
     session = get_session()
     rules, count = filter_rules_by_name_and_tag(name, tag, exclude_tag, session)
 
     if count == 0:
-        c.print(f"Query returned empty list of rules.")
+        ec.print(f"Query returned empty list of rules.")
         exit(-1)
 
     if assign and len(assign) > 0:
