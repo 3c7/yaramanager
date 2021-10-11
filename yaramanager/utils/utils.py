@@ -320,13 +320,23 @@ def rules_to_highlighted_string(rules: List[Rule]):
     return Syntax(yb.build_rules(), "python", background_color="default")
 
 
-def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session] = None) -> Tuple[List[Rule], int]:
+def filter_rules_by_name_and_tag(name: str, tag: Tuple[str], exclude_tag: Tuple[str],
+                                 session: Optional[Session] = None) -> Tuple[List[Rule], int]:
     if not session:
         session = get_session()
 
     rules = session.query(Rule)
     if tag and len(tag) > 0:
-        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name == tag)
+        rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name.in_(tag))
+    if exclude_tag and len(exclude_tag) > 0:
+        # Select rules which have one of the excluded tags and make sure the previously selected rules are not in there.
+        rules = rules.filter(~Rule.id.in_(
+            session.query(Rule)
+                .select_from(Tag)
+                .join(Rule.tags)
+                .filter(Tag.name.in_(exclude_tag))
+                .with_entities(Rule.id)
+        ))
     if name and len(name) > 0:
         rules = rules.filter(Rule.name.like(f"%{name}%"))
     count = rules.count()
@@ -334,4 +344,5 @@ def filter_rules_by_name_and_tag(name: str, tag: str, session: Optional[Session]
     if count == 0:
         return [], count
     else:
-        return rules.all(), count
+        rules = rules.all()
+        return rules, len(rules)

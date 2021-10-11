@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Tuple
 
 import click
 import yara
@@ -14,21 +14,23 @@ from yaramanager.utils.utils import filter_rules_by_name_and_tag, write_ruleset_
 @click.command(help="Scan files using your rulesets. Please be aware that this program should not be used anywhere "
                     "where performance matters. This is dead slow, single thread scanning. Useful for fast sample "
                     "classifications and checking your rule coverage, but not for scanning large filesets.")
-@click.option("-t", "--tag", help="Only use rules with tag.")
+@click.option("--tag", "-t", multiple=True, help="Only use rules with given tag.")
+@click.option("--exclude-tag", "-T", multiple=True, help="Exclude rules with given tag.")
 @click.option("-n", "--name", help="Only use rules contain [NAME] in name.")
-@click.option("-T", "--timeout", default=0, type=int, help="Set timeout in seconds.")
+@click.option("--timeout", default=0, type=int, help="Set timeout in seconds.")
 @click.option("-p", "--no-progress", is_flag=True, help="Disable progress bar.")
 @click.option("-c", "--csv", is_flag=True, help="CSV like output. Use together with -p!")
 @click.option("-r", "--recursive", is_flag=True, help="Scans directories recursively.")
 @click.argument("paths", type=click.Path(exists=True, file_okay=True, dir_okay=True), nargs=-1)
-def scan(tag: str, name: str, timeout: int, no_progress: bool, csv: bool, recursive: bool, paths: List[str]):
-    c, ec = Console(), Console(stderr=True)
+def scan(tag: Tuple[str], exclude_tag: Tuple[str], name: str, timeout: int, no_progress: bool, csv: bool,
+         recursive: bool, paths: List[str]):
+    c, ec = Console(), Console(style="bold red", stderr=True)
     if len(paths) == 0:
         with click.Context(scan) as ctx:
             c.print(scan.get_help(ctx))
             exit(-1)
     session = get_session()
-    rules, count = filter_rules_by_name_and_tag(name, tag, session)
+    rules, count = filter_rules_by_name_and_tag(name, tag, exclude_tag, session)
     if count == 0:
         ec.print("No rules matching your criteria.")
         exit(-1)
