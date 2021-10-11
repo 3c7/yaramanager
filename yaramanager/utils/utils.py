@@ -328,6 +328,15 @@ def filter_rules_by_name_and_tag(name: str, tag: Tuple[str], exclude_tag: Tuple[
     rules = session.query(Rule)
     if tag and len(tag) > 0:
         rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name.in_(tag))
+    if exclude_tag and len(exclude_tag) > 0:
+        # Select rules which have one of the excluded tags and make sure the previously selected rules are not in there.
+        rules = rules.filter(~Rule.id.in_(
+            session.query(Rule)
+                .select_from(Tag)
+                .join(Rule.tags)
+                .filter(Tag.name.in_(exclude_tag))
+                .with_entities(Rule.id)
+        ))
     if name and len(name) > 0:
         rules = rules.filter(Rule.name.like(f"%{name}%"))
     count = rules.count()
@@ -336,12 +345,4 @@ def filter_rules_by_name_and_tag(name: str, tag: Tuple[str], exclude_tag: Tuple[
         return [], count
     else:
         rules = rules.all()
-
-        # This is hacky. I'd love to implement this in the SQL query itself, but found nothing comparable to the "any"
-        # method which applies to ALL relationships, i.e. to all tags assigned to a rule.
-        if exclude_tag and len(exclude_tag) > 0:
-            filter_rules, rules = rules, []
-            for rule in filter_rules:
-                if not any([tag.name in exclude_tag for tag in rule.tags]):
-                    rules.append(rule)
         return rules, len(rules)
