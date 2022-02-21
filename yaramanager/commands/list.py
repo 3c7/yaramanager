@@ -24,7 +24,7 @@ from yaramanager.utils.utils import (
 def list(tag: Tuple[str], exclude_tag: Tuple[str], raw: bool, name: str, ensure: bool, assign: str):
     c, ec = Console(), Console(stderr=True, style="bold red")
     session = get_session()
-    rules, count = filter_rules_by_name_and_tag(name, tag, exclude_tag, session)
+    rules, count = filter_rules_by_name_and_tag(name, tag, exclude_tag, session, not raw)
 
     if count == 0:
         ec.print(f"Query returned empty list of rules.")

@@ -7,7 +7,7 @@ from yaramanager.db.base_class import Base
 class Meta(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     key = Column(String(255), index=True)
-    value = Column(String(255), index=True)
+    value = Column(String(4096), index=True)
     order = Column(Integer)
     rule_id = Column(Integer, ForeignKey("rule.id"))
     rule = relationship("Rule", back_populates="meta")

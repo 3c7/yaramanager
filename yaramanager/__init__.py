@@ -1,2 +1,2 @@
-version = "v0.1.16"
-alembic_version = "709085f65102"
+version = "v0.2.0-rc1"
+alembic_version = "25527d692d46"

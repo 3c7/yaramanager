@@ -51,6 +51,12 @@ selected = 0
 # [[yaramanager.db.databases]]
 # driver = "sqlite"
 # path = "/home/user/.config/yaramanager/data.db"
+# [[yaramanager.db.databases]]
+# driver = "mysql+pymysql"
+# path = "user:password@127.0.0.1/database"
+# [[yaramanager.db.databases]]
+# driver = "postgresql+psycopg2"
+# path = "user:password@127.0.0.1/database"
 
 # {init_database}
 
@@ -64,7 +70,7 @@ Created = "created"
 Modified = "modified"
 
 ## Ensure
-# Rule attributes to ensure (ym list --eensure|-e). ensure_meta contains a list of meta attributes, ensure_tag just
+# Rule attributes to ensure (ym list --ensure, -e). ensure_meta contains a list of meta attributes, ensure_tag just
 # requires tags set.
 [yaramanager.ensure]
 ensure_meta = [ "author", "tlp", "description" ]
