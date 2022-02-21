@@ -11,7 +11,7 @@ from plyara import Plyara
 from rich.console import Console
 from rich.syntax import Syntax
 from rich.table import Table
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, noload
 from yarabuilder import YaraBuilder
 
 from yaramanager.config import load_config
@@ -338,11 +338,14 @@ def rules_to_highlighted_string(rules: List[Rule]):
 
 
 def filter_rules_by_name_and_tag(name: str, tag: Tuple[str], exclude_tag: Tuple[str],
-                                 session: Optional[Session] = None) -> Tuple[List[Rule], int]:
+                                 session: Optional[Session] = None,
+                                 no_strings: Optional[bool] = False) -> Tuple[List[Rule], int]:
     if not session:
         session = get_session()
 
     rules = session.query(Rule)
+    if no_strings:
+        rules = rules.options(noload(Rule.strings))
     if tag and len(tag) > 0:
         rules = rules.select_from(Tag).join(Rule.tags).filter(Tag.name.in_(tag))
     if exclude_tag and len(exclude_tag) > 0:
