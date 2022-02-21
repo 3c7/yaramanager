@@ -32,19 +32,19 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8,<3.11"
 SQLAlchemy = "^1.4.2"
 plyara = "^2.1.1"
 yarabuilder = "^0.0.6"
-rich = "^10.0.0"
+rich = "^11.2.0"
 alembic = "^1.5.8"
-click = "^7.1.2"
+click = "^8.0.4"
 toml = "^0.10.2"
 requests = "^2.25.1"
-yara-python = "^4.1.0"
+yara-python = "^4.1.3"
 
 [tool.poetry.dev-dependencies]
-pyinstaller = "^4.3"
+pyinstaller = "^4.9"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
