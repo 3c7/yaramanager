@@ -8,7 +8,8 @@
 </div>
 
 # Yara Manager
-A simple program to manage your yara ruleset in a (sqlite) database.
+A simple program to manage your yara ruleset in a database. By default sqlite will be used, but using MySQL/MariaDB or
+Postgres is also possible.
 
 ## Todos
 - [ ] Implement backup and sharing possibilities
@@ -19,6 +20,13 @@ Install it using pip:
 pip install yaramanager
 ```
 Or grab one of the prebuilt binaries from the release page.
+
+**If you want to use other databases than SQLite, you need to install the specific extra dependencies:**
+
+```shell
+pip install yaramanager[mysql]
+pip install yaramanager[pgsql]
+```
 
 ## Configuration
 Yara Manager creates a fresh config if none exists. If you update from an older version, please pay attention to freshly
@@ -51,6 +59,17 @@ path = "/home/3c7/.config/yaramanager/myrules.db"
 ```
 If you want to use multiple databases (which is pretty useful if you use rules from different sources or with different 
 classifications), you can add them to the config file, too.
+
+In order to use MySQL/MariaDB or Postgres, you need to specify the specific database driver, e.g.:
+
+```toml
+[[yaramanager.db.databases]]
+driver = "mysql+pymysql"
+path = "user:password@127.0.0.1/database"
+[[yaramanager.db.databases]]
+driver = "postgresql+psycopg2"
+path = "user:password@127.0.0.1/database"
+```
 
 ## Features
 ### General usage
