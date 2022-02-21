@@ -39,7 +39,11 @@ def scan(tag: Tuple[str], exclude_tag: Tuple[str], name: str, timeout: int, no_p
     for rule in rules:
         rule.add_to_yarabuilder(yb)
     ruleset_path, _ = write_ruleset_to_tmp_file(yb)
-    ruleset_compiled = yara.compile(ruleset_path)
+
+    # Initialize external parameter filename as empty string. This will be filled during matching files.
+    ruleset_compiled = yara.compile(ruleset_path, externals={
+        "filename": ""
+    })
     if not no_progress:
         c.print(f"Using ruleset {ruleset_path} for scanning. Check the rule file in case any error shows up.")
     if recursive:
@@ -56,7 +60,10 @@ def scan(tag: Tuple[str], exclude_tag: Tuple[str], name: str, timeout: int, no_p
             if os.path.isdir(path):
                 continue
             try:
-                matches = ruleset_compiled.match(path, timeout=timeout)
+                # Check if file matches. This also adds the basename as filename parameter.
+                matches = ruleset_compiled.match(path, timeout=timeout, externals={
+                    "filename": os.path.basename(path)
+                })
             except yara.TimeoutError:
                 prog.print(Text("Timed out!", style="bold red"))
                 if isinstance(prog, Progress):

@@ -30,7 +30,7 @@ def read_rulefile(path: str) -> List[Dict]:
     return Plyara().parse_string(raw)
 
 
-def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
+def plyara_obj_to_rule(obj: Dict, session: Session, overwrite_ruleset: str = None) -> Rule:
     """
     Converts a yara rule dictionary representation into a Rule object.
 
@@ -45,7 +45,14 @@ def plyara_obj_to_rule(obj: Dict, session: Session) -> Rule:
     r.imports = plyara_object_to_imports(obj)
     r.tags = plyara_object_to_tags(obj, session)
     r.condition = plyara_object_to_condition(obj)
-    ruleset = plyara_object_to_ruleset(obj, session)
+    if not overwrite_ruleset:
+        ruleset = plyara_object_to_ruleset(obj, session)
+    else:
+        ruleset = get_ruleset_by_name(
+            name=overwrite_ruleset,
+            session=session,
+            create=True
+        )
     r.ruleset = ruleset
     return r
 
@@ -139,11 +146,21 @@ def plyara_object_to_ruleset(obj: Dict, session: Session) -> Union[Ruleset, None
             if k != key:
                 continue
 
-            ruleset = session.query(Ruleset).filter(Ruleset.name == v).first()
-            if not ruleset:
-                ruleset = Ruleset(name=v)
-            return ruleset
+            return get_ruleset_by_name(
+                name=v,
+                session=session,
+                create=True
+            )
     return None
+
+
+def get_ruleset_by_name(name: str, session: Session, create: bool = False) -> Union[Ruleset, None]:
+    """Get ruleset by name and return it or return None. If `create` is given, a not existing ruleset will be
+    created."""
+    r = session.query(Ruleset).filter(Ruleset.name == name).first()
+    if not r and create:
+        return Ruleset(name=name)
+    return r
 
 
 def parse_rule(rule: str) -> Union[Dict, List]:
