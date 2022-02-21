@@ -22,7 +22,7 @@ def version(check):
     if check:
         github_ver = get_latest_release_tag()
 
-    c.print(f"YaraManager v{ver}")
+    c.print(f"YaraManager {ver}")
     if IS_BINARY:
         c.print(f"Built from Git commit {commit}.")
 
