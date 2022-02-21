@@ -17,7 +17,7 @@ def get_session() -> Session:
     db = config.get_current_db()
     driver = db["driver"]
     path = db["path"]
-    if driver == "sqlite" and not os.path.exists(path) or os.path.getsize(path) == 0:
+    if driver == "sqlite" and not (os.path.exists(path) or os.path.getsize(path)) == 0:
         ec.print("Database not initialized.")
         exit(-1)
     engine = get_engine()
