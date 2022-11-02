@@ -30,11 +30,20 @@ class String(Base):
     def is_base64(self):
         return self.modifiers & 0x8 > 0
 
+    def is_base64_wide(self):
+        return self.modifiers & 0x10 > 0
+
+    def is_nocase(self):
+        return self.modifiers & 0x20 > 0
+
+    def is_fullword(self):
+        return self.modifiers & 0x40 > 0
+
     @property
     def modifier_list(self) -> List[str]:
         m = self.modifiers
         l = []
-        for mod in ["ascii", "wide", "xor", "base64"]:
+        for mod in ["ascii", "wide", "xor", "base64", "base64wide", "nocase", "fullword"]:
             if m & 0x1:
                 l.append(mod)
             m = m >> 1

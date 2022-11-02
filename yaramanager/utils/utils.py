@@ -93,6 +93,12 @@ def plyara_object_to_strings(obj: Dict) -> List[String]:
                 s.modifiers = s.modifiers | 0x4
             elif mod == "base64":
                 s.modifiers = s.modifiers | 0x8
+            elif mod == "base64wide":
+                s.modifiers = s.modifiers | 0x10
+            elif mod == "nocase":
+                s.modifiers = s.modifiers | 0x20
+            elif mod == "fullword":
+                s.modifiers = s.modifiers | 0x40
         strings.append(s)
     return strings
 
