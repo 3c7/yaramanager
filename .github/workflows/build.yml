@@ -3,6 +3,8 @@ name: build
 on:
   release:
     types: [edited, published]
+  workflow_dispatch:
+    
 
 jobs:
   build:
@@ -11,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-16.04
+          - os: ubuntu-18.04
             artifact_name: ym
             asset_name: linux
           - os: windows-2019
